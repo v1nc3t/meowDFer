@@ -3,6 +3,8 @@ import sys
 import re
 import argparse
 
+from commands import extract
+
 
 logo = r"""
       |\      _,,,---,,_
@@ -11,9 +13,6 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
     '---''(_/--'  `-'\_)  meowDFer
 """
 
-
-def extract_zips(src, dest):
-    return
 
 def extract_chapter_number(file_name):
     return
@@ -35,11 +34,17 @@ def main():
         prog="meowDFer",
         description="Extract zips, converts image folders into PDFs, and combines PDFs into volume"
     )
-    subparsers = parser.add_subparsers(dest="commands", required=True) 
 
-    name = input("Enter name: ")
+    extract.register_command(parser)
 
-    print(name)
+    args = parser.parse_args()
+
+    if args.extract:
+        if not args.src or not args.dest:
+            parser.error("The --src and --dest flags are required when using -e/--extract")
+        extract.run(args)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
