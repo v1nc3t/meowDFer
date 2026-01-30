@@ -1,8 +1,14 @@
-# byte-compiled / optimized / DLL files
+# ignore everything
+*
+
+# except these
+!src/
+!src/**
+
+!.gitignore
+!README.md
+
+# ignore byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# testig files
-temp/
-zips/
