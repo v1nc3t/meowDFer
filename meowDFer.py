@@ -1,6 +1,7 @@
 import os
 import sys
-import re 
+import re
+import argparse
 
 
 logo = r"""
@@ -29,6 +30,12 @@ def combine_volume(src, dest, name):
 
 def main():
     print(logo)
+
+    parser = argparse.ArgumentParser(
+        prog="meowDFer",
+        description="Extract zips, converts image folders into PDFs, and combines PDFs into volume"
+    )
+    subparsers = parser.add_subparsers(dest="commands", required=True) 
 
     name = input("Enter name: ")
 
