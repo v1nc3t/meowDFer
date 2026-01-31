@@ -5,6 +5,13 @@
 !src/
 !src/**
 
+!tests/
+!tests/**
+
+!.github/
+!.github/**
+
+!pyproject.toml
 !.gitignore
 !README.md
 

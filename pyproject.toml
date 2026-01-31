@@ -1,0 +1,17 @@
+[project]
+name = "meowDFer"
+version = "0.1.0"
+description = "Convert zipped image files into PDFs"
+requires-python = ">=3.10"
+
+dependencies = [
+    "Pillow"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
