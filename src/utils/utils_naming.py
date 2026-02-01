@@ -1,17 +1,26 @@
 import re
 
+def create_chapter_name(name, chapter_number):
+    return f"{name} Chapter {chapter_number}"
+
 def extract_chapter_number(file_name):
-    
-    title_pattern = r'(?i)\b(?:chapter|ch\.?|c)\s*(\d+(?:\.\d)?)\b'
+    match = re.search(
+        r'(?i)\b(?:chapter|ch\.?|c)\s*(\d+(?:\.\d+)?)\b',
+        file_name
+    )
 
-    match = re.search(title_pattern, file_name)
-
-    return float(match.group(1)) if match else float('inf')
+    if not match:
+        raise ValueError(f"No chapter number found in `{file_name}`")
+        
+    return float(match.group(1))
 
 def extract_page_number(file_name):
 
     page_pattern = r'(\d+)'
 
-    match = re.search(page_pattern, file_name)
+    match = re.search(
+        r'(\d+)',
+        file_name
+    )
 
-    return float(match.group(1)) if match else float('inf')
+    return float(match.group(1))

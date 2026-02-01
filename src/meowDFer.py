@@ -3,7 +3,7 @@ import sys
 import re
 import argparse
 
-from commands import extract
+from commands import extract, convert
 
 
 logo = r"""
@@ -13,36 +13,41 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
     '---''(_/--'  `-'\_)  meowDFer
 """
 
-
-def extract_chapter_number(file_name):
-    return
-
-def file_to_pdf(file_name):
-    return
-
-def convert_all_pdf(src, dest, name):
-    return
-
-def combine_volume(src, dest, name):
-    return
-
-
 def main():
     print(logo)
 
     parser = argparse.ArgumentParser(
         prog="meowDFer",
-        description="Extract zips, converts image folders into PDFs, and combines PDFs into volume"
+        description="Extract zips, converts image folders into PDFs, and combines PDFs into volume. (for help use extract -h)"
     )
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
-    extract.register_command(parser)
+    # extract
+    extract_parser = subparsers.add_parser(
+        "extract", help="Extract one or more zip files from a folder"
+    )
+    extract.register_command(extract_parser)
+
+    # convert
+    convert_parser = subparsers.add_parser(
+        "convert", help="Converts one or more folders with images into PDFs. (for help use convert -h)"
+    )
+    convert.register_command(convert_parser)
 
     args = parser.parse_args()
 
-    if args.extract:
+    if args.command == "extract":
         if not args.src or not args.dest:
-            parser.error("The --src and --dest flags are required when using -e/--extract")
+            extract_parser.error("The --src and --dest flags are required when using -e/--extract")
+        print("Running extract...")
         extract.run(args)
+
+    elif args.command == "convert":
+        if not args.src or not args.dest:
+            convert_parser.error("The --src and --dest flags are required when using -c/--convert")
+        print("Running convert...")
+        convert.run(args)
+    
     else:
         parser.print_help()
 
