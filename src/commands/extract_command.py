@@ -1,5 +1,5 @@
 
-from utils.utils_zips import extract_zips
+from utils.extract import extract_zips
 
 def run(args):
     src = args.src
