@@ -81,10 +81,14 @@ def merge_to_volumes(src, dest, name):
 
     merger = PdfWriter()
 
-    file = [f for f in os.listdir(src) if f.endswith(".pdf")]
+    file = sorted(
+        [f for f in os.listdir(src) if f.endswith(".pdf")],
+        key=u_name.extract_chapter_number
+    )
     for pdf in file:
         pdf_path = os.path.join(src, pdf)
         merger.append(pdf_path)
+        print(f"Added to merge: `{pdf}`")
 
     name = f"{name} Vol.{1}.pdf"
     output_path = os.path.join(dest, name)
@@ -92,4 +96,6 @@ def merge_to_volumes(src, dest, name):
         merger.write(output)
     
     merger.close()
+
+    print(f"Finished merge")
 
