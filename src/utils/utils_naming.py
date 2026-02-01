@@ -10,9 +10,13 @@ def extract_chapter_number(file_name):
     )
 
     if not match:
-        raise ValueError(f"No chapter number found in `{file_name}`")
-        
-    return float(match.group(1))
+        raise ValueError(f"No chapter number found`")
+    
+    number_str = match.group(1)
+    if '.' in number_str:
+        raise ValueError(f"Decimal chapter number are skipped")
+
+    return int(number_str)
 
 def extract_page_number(file_name):
 
@@ -23,4 +27,8 @@ def extract_page_number(file_name):
         file_name
     )
 
-    return float(match.group(1))
+    number_str = match.group(1)
+    if '.' in number_str:
+        raise ValueError(f"Decimal page number not allowed")
+    
+    return int(number_str)
