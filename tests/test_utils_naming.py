@@ -24,4 +24,7 @@ def test_extract_page_integer():
     assert utils_naming.extract_page_number("9.jpeg") == 9
 
 def test_extract_page_decimal():
-    assert utils_naming.extract_page_number("9.5.jpeg") == 9
+    assert utils_naming.extract_page_number("9.jpeg") == 9
+
+def test_create_chapter_name():
+    assert utils_naming.create_chapter_name("Test", 1) == "Test Chapter 1"
