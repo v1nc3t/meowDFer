@@ -1,9 +1,15 @@
 import os
 
-from . import utils_naming as u_name 
+from .import utils_naming as u_name 
 from PIL import Image
 
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
 def convert_all_to_pdf(src, dest, name):
+    
+    src = os.path.join(PROJECT_ROOT, src)
+    dest = os.path.join(PROJECT_ROOT, dest)
+
     if not os.path.isdir(src):
         raise FileNotFoundError(f"Source folder not found: {src}")
 
