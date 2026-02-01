@@ -14,8 +14,6 @@ def tmp_dirs(tmp_path):
     zips.mkdir()
     return zips, out
 
-
-
 def test_extract_one_zip(tmp_dirs):
     zips, out = tmp_dirs
 
@@ -29,8 +27,6 @@ def test_extract_one_zip(tmp_dirs):
     assert out.exists()
     assert (out / "file.txt").exists()
     assert (out / "file.txt").read_text() == "test"
-
-
 
 def test_extract_many_zips(tmp_dirs):
     zips, out = tmp_dirs

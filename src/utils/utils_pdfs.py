@@ -1,6 +1,6 @@
 import os
-import utils_naming as u_name 
 
+from . import utils_naming as u_name 
 from PIL import Image
 
 def convert_all_to_pdf(src, dest, name):
@@ -28,7 +28,7 @@ def convert_folder_to_pdf(src, dest, name):
         print(f"Skipping folder: {folder_name}: {e}")
         return
 
-    pdf_name = u_name.create_chapter_name(name, chapter_number)= ".pdf"
+    pdf_name = u_name.create_chapter_name(name, chapter_number) + ".pdf"
     pdf_path = os.path.join(dest, pdf_name)
 
     try:
