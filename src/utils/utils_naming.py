@@ -19,7 +19,7 @@ def extract_page_number(file_name):
     page_pattern = r'(\d+)'
 
     match = re.search(
-        r'(\d+)(?=\D*$)',
+        r'(\d+)',
         file_name
     )
 
