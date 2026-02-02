@@ -1,7 +1,10 @@
+import os
 import pytest
 
 from PIL import Image
-from src.utils import utils_pdfs
+from src.utils import convert as test
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 @pytest.fixture
 def temp_dirs(tmp_path):
@@ -20,10 +23,10 @@ def test_convert_all_to_pdf(temp_dirs):
     for i in range(3):
         Image.new('RGB', (100, 100), color=(i*50, i*50, i*50)).save(folder / f"{i+1}.png")
     
-    utils_pdfs.convert_all_to_pdf(str(src), str(dest), "Test")
+    test.convert_all_to_pdf(str(src), str(dest), "Test")
 
     pdf_files = list(dest.glob("*.pdf"))
 
     assert len(pdf_files) == 1
-    assert "Test Chapter 1.0.pdf" == pdf_files[0].name
+    assert "Test Chapter 1.pdf" == pdf_files[0].name
     

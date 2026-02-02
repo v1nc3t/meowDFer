@@ -1,10 +1,9 @@
 
-from utils.utils_pdfs import convert_all_to_pdf
+from utils.convert import convert_all_to_pdf
 
-def run(args):
+def run(args, name):
     src = args.src
     dest = args.dest
-    name = args.name
     convert_all_to_pdf(src, dest, name)
 
 def register_command(parser):
@@ -17,9 +16,4 @@ def register_command(parser):
         "--dest",
         type=str,
         help="Name of folder where pdf to be created"
-    )
-    parser.add_argument(
-        "--name",
-        type=str,
-        help="Name of the book"
     )

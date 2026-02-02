@@ -2,7 +2,7 @@ import os
 import pytest
 
 from zipfile import ZipFile, BadZipFile
-from src.utils import utils_zips
+from src.utils import extract as test
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -22,7 +22,7 @@ def test_extract_one_zip(tmp_dirs):
     with ZipFile(zip_path, "w") as z:
         z.writestr("file.txt", "test")
 
-    utils_zips.extract_zips(str(zips), str(out))
+    test.extract_zips(str(zips), str(out))
 
     assert out.exists()
     assert (out / "file.txt").exists()
@@ -37,7 +37,7 @@ def test_extract_many_zips(tmp_dirs):
         z.writestr("file1.txt", "test1")
         z.writestr("file2.txt", "test2")
 
-    utils_zips.extract_zips(str(zips), str(out))
+    test.extract_zips(str(zips), str(out))
 
     assert out.exists()
     assert (out / "file1.txt").exists()
@@ -53,7 +53,7 @@ def test_extract_bad_zip(tmp_dirs):
     bad_zip = zips / "test.zip"
     bad_zip.write_text("this is not a zip")
 
-    utils_zips.extract_zips(str(zips), str(out))
+    test.extract_zips(str(zips), str(out))
 
     assert out.exists()
     assert list(out.iterdir()) == []
@@ -70,7 +70,7 @@ def test_extract_mixed_zips(tmp_dirs):
     bad = zips / "bad.zip"
     bad.write_text("bad zip file")
 
-    utils_zips.extract_zips(str(zips), str(out))
+    test.extract_zips(str(zips), str(out))
 
     assert (out / "ok.txt").exists()
     assert (out / "ok.txt").read_text() == "good"
