@@ -1,9 +1,7 @@
-import os
 import sys
-import re
 import argparse
 
-from commands import convert_command, extract_command, merge_command
+from commands import convert_command, extract_command, merge_command, all_command
 
 logo = r"""
       |\      _,,,---,,_
@@ -39,6 +37,12 @@ def main():
     )
     merge_command.register_command(merge_parser)
 
+    # all in one command
+    all_parser = subparsers.add_parser(
+        "all", help="Extract, convert and merge all at once. (help: all -h)"
+    )
+    all_command.register_command(all_parser)
+
     args = parser.parse_args()
 
     if args.command == "extract":
@@ -57,11 +61,20 @@ def main():
     
     elif args.command == "merge":
         if not args.src or not args.dest:
-            merge_parser.error("The --src, --dest, and --vals flags are required when using merge")
+            merge_parser.error("The --src, --dest, and --vols flags are required when using merge")
         
         name = input("Give name: ")
         print("Running merge...\n")
         merge_command.run(args, name)
+
+    elif args.command == "all":
+        if not args.src or not args.dest:
+            merge_parser.error("The --src, --dest, and --vols flags are required when using all")
+
+        name = input("Give name: ")
+        print("Running all...")
+        all_command.run(args, name)
+
 
     else:
         parser.print_help()
