@@ -19,13 +19,13 @@ def extract_zips(src, dest):
                 try:
                     with ZipFile(zip_path, 'r') as zip_ref:
                         zip_ref.extractall(dest)
-                        print(f"Extracted {file_name}")
+                        print(f"Extracted: {file_name}")
                 except BadZipFile:
                     print(f"Invalid zip file: {file_name}")
                 except Exception as e:
                     print(f"Failed to extract {file_name}: {e}")
         
-        print(f"Extracted all zips")
+        print(f"\nExtracted all zips")
     except FileNotFoundError:
         print(f"Source directory not found: {src}")
     except PermissionError:

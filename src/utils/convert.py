@@ -23,7 +23,7 @@ def convert_all_to_pdf(src, dest, name):
             except Exception as e:
                 print(f"Failed to convert folder `{folder}`: {e}")
 
-    print("All folders converted to PDFs")
+    print("\nAll folders converted to PDFs\n")
 
 def convert_folder_to_pdf(src, dest, name):
     folder_name = os.path.basename(src.rstrip('/'))

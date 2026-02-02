@@ -44,7 +44,7 @@ def main():
     if args.command == "extract":
         if not args.src or not args.dest:
             extract_parser.error("The --src and --dest flags are required when using extract")
-        print("Running extract...")
+        print("Running extract...\n")
         extract_command.run(args)
 
     elif args.command == "convert":
@@ -52,7 +52,7 @@ def main():
             convert_parser.error("The --src and --dest flags are required when using convert")
         
         name = input("Give name: ")
-        print("Running convert...")
+        print("Running convert...\n")
         convert_command.run(args, name)
     
     elif args.command == "merge":
@@ -60,7 +60,7 @@ def main():
             merge_parser.error("The --src, --dest, and --vals flags are required when using merge")
         
         name = input("Give name: ")
-        print("Running merge...")
+        print("Running merge...\n")
         merge_command.run(args, name)
 
     else:

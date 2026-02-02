@@ -68,11 +68,11 @@ def merge_to_volumes(src, dest, vals, name):
             with open(vol_path, "wb") as vol:
                 merger.write(vol)
             
-            print(f"Merge succesful: `{vol_name}`")
+            print(f"\nMerge succesful: `{vol_name}`")
         finally:
             merger.close()
 
         vol_num += 1
         prev = val
 
-    print(f"Finished merge")
+    print(f"\nFinished merge")
