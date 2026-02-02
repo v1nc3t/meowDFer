@@ -57,7 +57,7 @@ def main():
     
     elif args.command == "merge":
         if not args.src or not args.dest:
-            merge_parser.error("The --src and --dest flags are required when using merge")
+            merge_parser.error("The --src, --dest, and --vals flags are required when using merge")
         print("Running merge...")
         merge_command.run(args, name)
 

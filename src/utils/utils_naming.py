@@ -3,6 +3,9 @@ import re
 def create_chapter_name(name, chapter_number):
     return f"{name} Chapter {chapter_number}"
 
+def create_volume_name(name, volume_number):
+    return f"{name} Volume {volume_number}"
+
 def extract_chapter_number(file_name):
     match = re.search(
         r'(?i)\b(?:chapter|ch\.?|c)\s*(\d+(?:\.\d+)?)\b',
