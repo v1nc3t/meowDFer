@@ -6,7 +6,7 @@ from . import utils_naming as u_name
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-def merge_to_volumes(src, dest, name):
+def merge_to_volumes(src, dest, intervals, name):
     src = os.path.join(PROJECT_ROOT, src)
     dest = os.path.join(PROJECT_ROOT, dest)
 

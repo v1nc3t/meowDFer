@@ -1,11 +1,11 @@
 
 from utils.merge import merge_to_volumes
 
-def run(args):
+def run(args, name):
     src = args.src
     dest = args.dest
-    name = args.name
-    merge_to_volumes(src, dest, name)
+    vals = args.vals
+    merge_to_volumes(src, dest, vals, name)
 
 def register_command(parser):
     parser.add_argument(
@@ -19,7 +19,7 @@ def register_command(parser):
         help="Name of destination folder where volumes are to be created"
     )
     parser.add_argument(
-        "--name",
+        "--vals",
         type=str,
-        help="Name of the book"
+        help="Name of .txt where intervals for volums are located (include and chapter number separated by commas)"
     )

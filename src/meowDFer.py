@@ -15,6 +15,8 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
 def main():
     print(logo)
 
+    name = input("Give name: ")
+
     parser = argparse.ArgumentParser(
         prog="meowDFer",
         description="Extract zips, converts image folders into PDFs, and combines PDFs into volume."
@@ -43,21 +45,21 @@ def main():
 
     if args.command == "extract":
         if not args.src or not args.dest:
-            extract_parser.error("The --src and --dest flags are required when using -e/--extract")
+            extract_parser.error("The --src and --dest flags are required when using extract")
         print("Running extract...")
         extract_command.run(args)
 
     elif args.command == "convert":
         if not args.src or not args.dest:
-            convert_parser.error("The --src, --dest, and --name flags are required when using -c/--convert")
+            convert_parser.error("The --src and --dest flags are required when using convert")
         print("Running convert...")
-        convert_command.run(args)
+        convert_command.run(args, name)
     
     elif args.command == "merge":
         if not args.src or not args.dest:
-            merge_parser.error("The --src, and--dest flags are required when using -m/--merge")
+            merge_parser.error("The --src and --dest flags are required when using merge")
         print("Running merge...")
-        merge_command.run(args)
+        merge_command.run(args, name)
 
     else:
         parser.print_help()
