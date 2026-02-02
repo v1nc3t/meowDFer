@@ -10,6 +10,8 @@ def run(args, name):
     dest = args.dest
     vols = args.vols
 
+    print("\n\033[95mRunning all...\033[0m")
+
     with tempfile.TemporaryDirectory() as tmp_extracted:
         extract_zips(src, tmp_extracted)
 
@@ -17,6 +19,8 @@ def run(args, name):
             convert_all_to_pdf(tmp_extracted, temp_converted, name)
 
             merge_to_volumes(temp_converted, dest, vols, name)
+    
+    print("\033[95mCompleted all.\033[0m")
 
 
 def register_command(parser):
