@@ -11,7 +11,7 @@ def convert_all_to_pdf(src, dest, name):
     dest = os.path.join(PROJECT_ROOT, dest)
 
     if not os.path.isdir(src):
-        raise FileNotFoundError(f"Source folder not found: {src}")
+        raise FileNotFoundError(f"\033[91mSource folder not found: {src}\033[0m")
 
     os.makedirs(dest, exist_ok=True)
 
@@ -21,9 +21,9 @@ def convert_all_to_pdf(src, dest, name):
             try:
                 convert_folder_to_pdf(path, dest, name)
             except Exception as e:
-                print(f"Failed to convert folder `{folder}`: {e}")
+                print(f"\033[91mFailed to convert folder `{folder}`: {e}\033[0m")
 
-    print("\nAll folders converted to PDFs\n")
+    print("\n\033[95mAll folders converted to PDFs\033[0m\n")
 
 def convert_folder_to_pdf(src, dest, name):
     folder_name = os.path.basename(src.rstrip('/'))
@@ -31,7 +31,7 @@ def convert_folder_to_pdf(src, dest, name):
     try:
         chapter_number = u_name.extract_chapter_number(folder_name)
     except ValueError as e:
-        print(f"Skipping folder: {folder_name}: {e}")
+        print(f"\033[93mSkipping folder: {folder_name}: {e}\033[0m")
         return
 
     pdf_name = u_name.create_chapter_name(name, chapter_number) + ".pdf"
@@ -43,10 +43,10 @@ def convert_folder_to_pdf(src, dest, name):
             key=u_name.extract_page_number
         )
     except Exception as e:
-        raise RuntimeError(f"Failed to sort images in {src}")
+        raise RuntimeError(f"\033[91mFailed to sort images in {src}\033[0m")
     
     if not images:
-        print(f"No images found in folder")
+        print(f"\033[91mNo images found in folder\033[0m")
         return
 
     img_list = []
@@ -58,13 +58,13 @@ def convert_folder_to_pdf(src, dest, name):
                 img = img.convert('RGB')
             img_list.append(img)
         except Exception as e:
-            print(f"Skipping image `{image}`: {e}")
+            print(f"\033[93mSkipping image `{image}`: {e}\033[0m")
 
     if not img_list:
-        print(f"No valid image in folder: {src}")
+        print(f"\033[91mNo valid image in folder: {src}\033[0m")
         return
 
     first_img = img_list.pop(0)
     first_img.save(pdf_path, save_all=True, append_images=img_list)
     
-    print(f"PDF created: {pdf_name}")
+    print(f"\033[92mPDF created: {pdf_name}\033[0m")

@@ -12,10 +12,10 @@ def merge_to_volumes(src, dest, vals, name):
     vals = os.path.join(PROJECT_ROOT, vals)
 
     if not os.path.isdir(src):
-        raise FileNotFoundError(f"Source folder no found: {src}")
+        raise FileNotFoundError(f"\033[91mSource folder no found: {src}\033[0m")
     
     if not os.path.isfile(vals):
-        raise FileNotFoundError(f"Intervals file not found: {vals}")
+        raise FileNotFoundError(f"\033[91mIntervals file not found: {vals}\033[0m")
     
     os.makedirs(dest, exist_ok=True)
 
@@ -23,18 +23,18 @@ def merge_to_volumes(src, dest, vals, name):
         with open(vals) as f:
             intervals = list(map(int, f.read().split(", ")))
     except:
-        raise ValueError("Interval file must contain only integers separated by ', '")
+        raise ValueError("\033[91mInterval file must contain only integers separated by ', '\033[0m")
 
     if not intervals:
-        raise ValueError("Intervals list empty")
+        raise ValueError("\033[91mIntervals list empty\033[0m")
     
     if intervals != sorted(intervals):
-        raise ValueError("Intervals must be stricty increasing")
+        raise ValueError("\033[91mIntervals must be stricty increasing\033[0m")
 
     pdfs = [f for f in os.listdir(src) if f.endswith(".pdf")]
 
     if not pdfs:
-        raise ValueError("No PDF files foind in given source folder")
+        raise ValueError("\033[91mNo PDF files foind in given source folder\033[0m")
     
     pdfs = sorted(pdfs, key=u_name.extract_chapter_number)
 
@@ -42,7 +42,7 @@ def merge_to_volumes(src, dest, vals, name):
     for f in pdfs:
         ch = u_name.extract_chapter_number(f)
         if ch in chapter_map:
-            raise ValueError(f"Duplicate chapter detected: {ch}")
+            raise ValueError(f"\033[91mDuplicate chapter detected: {ch}\033[0m")
         chapter_map[ch] = f
 
     vol_num = 1
@@ -52,15 +52,15 @@ def merge_to_volumes(src, dest, vals, name):
         end_ch = val
 
         if start_ch > end_ch:
-            raise ValueError(f"Invalid volume range: {start_ch} -> {end_ch}")
+            raise ValueError(f"\033[91mInvalid volume range: {start_ch} -> {end_ch}\033[0m")
 
         merger = PdfWriter()
         try:    
             for ch in range(start_ch, end_ch + 1):
                 if ch not in chapter_map:
-                    raise ValueError(f"Missing chapter: {ch}")
+                    raise ValueError(f"\033[91mMissing chapter: {ch}\033[0m")
                 merger.append(os.path.join(src, chapter_map[ch]))
-                print(f"Added to merge: `{chapter_map[ch]}`")
+                print(f"\033[96mAdded to merge: `{chapter_map[ch]}`\033[0m")
             
             vol_name = u_name.create_volume_name(name, vol_num) + ".pdf"
             vol_path = os.path.join(dest, vol_name)
@@ -68,11 +68,11 @@ def merge_to_volumes(src, dest, vals, name):
             with open(vol_path, "wb") as vol:
                 merger.write(vol)
             
-            print(f"\nMerge succesful: `{vol_name}`")
+            print(f"\n\033[92mMerge succesful: `{vol_name}`\033[0m\n")
         finally:
             merger.close()
 
         vol_num += 1
         prev = val
 
-    print(f"\nFinished merge")
+    print(f"\n\033[95mFinished merge\033[0m")

@@ -19,16 +19,16 @@ def extract_zips(src, dest):
                 try:
                     with ZipFile(zip_path, 'r') as zip_ref:
                         zip_ref.extractall(dest)
-                        print(f"Extracted: {file_name}")
+                        print(f"\033[92mExtracted successfully: {file_name}\033[0m")
                 except BadZipFile:
-                    print(f"Invalid zip file: {file_name}")
+                    print(f"\033[91mInvalid zip file: {file_name}\033[0m")
                 except Exception as e:
-                    print(f"Failed to extract {file_name}: {e}")
+                    print(f"\033[91mFailed to extract {file_name}: {e}\033[0m")
         
-        print(f"\nExtracted all zips")
+        print(f"\n\033[95mExtracted all zips\033[0m\n")
     except FileNotFoundError:
-        print(f"Source directory not found: {src}")
+        print(f"\033[91mSource directory not found: {src}\033[0m")
     except PermissionError:
-        print(f"Permission denied.")
+        print(f"\033[91mPermission denied.\033[0m")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        print(f"\033[91mUnexpected error: {e}\033[0m")
