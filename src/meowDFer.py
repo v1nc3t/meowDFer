@@ -44,13 +44,14 @@ def main():
     all_command.register_command(all_parser)
 
     args = parser.parse_args()
-
+    
+    # extract zips
     if args.command == "extract":
         if not args.src or not args.dest:
             extract_parser.error("The --src and --dest flags are required when using extract")
         print("Running extract...\n")
         extract_command.run(args)
-
+    # convert folders to PDFs
     elif args.command == "convert":
         if not args.src or not args.dest:
             convert_parser.error("The --src and --dest flags are required when using convert")
@@ -58,7 +59,7 @@ def main():
         name = input("Give name: ")
         print("Running convert...\n")
         convert_command.run(args, name)
-    
+    # meerge PDFs into volumes
     elif args.command == "merge":
         if not args.src or not args.dest:
             merge_parser.error("The --src, --dest, and --vols flags are required when using merge")
@@ -66,7 +67,7 @@ def main():
         name = input("Give name: ")
         print("Running merge...\n")
         merge_command.run(args, name)
-
+    # run all three: extract, convert, and merge one after another 
     elif args.command == "all":
         if not args.src or not args.dest:
             merge_parser.error("The --src, --dest, and --vols flags are required when using all")
@@ -74,7 +75,6 @@ def main():
         name = input("Give name: ")
         print("Running all...")
         all_command.run(args, name)
-
 
     else:
         parser.print_help()
