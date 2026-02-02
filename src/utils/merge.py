@@ -14,20 +14,36 @@ def merge_to_volumes(src, dest, vals, name):
     if not os.path.isdir(src):
         raise FileNotFoundError(f"Source folder no found: {src}")
     
+    if not os.path.isfile(vals):
+        raise FileNotFoundError(f"Intervals file not found: {vals}")
+    
     os.makedirs(dest, exist_ok=True)
 
-    with open(vals) as f:
-        intervals = list(map(int, f.read().split(", ")))
+    try:
+        with open(vals) as f:
+            intervals = list(map(int, f.read().split(", ")))
+    except:
+        raise ValueError("Interval file must contain only integers separated by ', '")
 
-    pdfs = sorted(
-        [f for f in os.listdir(src) if f.endswith(".pdf")],
-        key=u_name.extract_chapter_number
-    )
+    if not intervals:
+        raise ValueError("Intervals list empty")
+    
+    if intervals != sorted(intervals):
+        raise ValueError("Intervals must be stricty increasing")
 
-    chapter_map = {
-        u_name.extract_chapter_number(f): f
-        for f in pdfs
-    }
+    pdfs = [f for f in os.listdir(src) if f.endswith(".pdf")]
+
+    if not pdfs:
+        raise ValueError("No PDF files foind in given source folder")
+    
+    pdfs = sorted(pdfs, key=u_name.extract_chapter_number)
+
+    chapter_map = {}
+    for f in pdfs:
+        ch = u_name.extract_chapter_number(f)
+        if ch in chapter_map:
+            raise ValueError(f"Duplicate chapter detected: {ch}")
+        chapter_map[ch] = f
 
     vol_num = 1
     prev = 0
@@ -35,21 +51,26 @@ def merge_to_volumes(src, dest, vals, name):
         start_ch = prev + 1
         end_ch = val
 
+        if start_ch > end_ch:
+            raise ValueError(f"Invalid volume range: {start_ch} -> {end_ch}")
+
         merger = PdfWriter()
-        for ch in range(start_ch, end_ch + 1):
-            ch_name = chapter_map[ch]
-            ch_path = os.path.join(src, ch_name)
-            merger.append(ch_path)
-            print(f"Added to merge: `{ch_name}`")
-        
-        vol_name = u_name.create_volume_name(name, vol_num) + ".pdf"
-        vol_path = os.path.join(dest, vol_name)
-        
-        with open(vol_path, "wb") as vol:
-            merger.write(vol)
+        try:    
+            for ch in range(start_ch, end_ch + 1):
+                if ch not in chapter_map:
+                    raise ValueError(f"Missing chapter: {ch}")
+                merger.append(os.path.join(src, chapter_map[ch]))
+                print(f"Added to merge: `{chapter_map[ch]}`")
+            
+            vol_name = u_name.create_volume_name(name, vol_num) + ".pdf"
+            vol_path = os.path.join(dest, vol_name)
+            
+            with open(vol_path, "wb") as vol:
+                merger.write(vol)
+            
             print(f"Merge succesful: `{vol_name}`")
-        
-        merger.close()
+        finally:
+            merger.close()
 
         vol_num += 1
         prev = val
