@@ -2,7 +2,7 @@ import os
 import pytest
 
 from PIL import Image
-from meowDFer.utils import convert as test
+from src.utils import convert as test
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 

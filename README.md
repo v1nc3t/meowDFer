@@ -6,11 +6,11 @@ This is a tool made to simplify the processes mentioned above.
 
 ##### Example commands:
 
-- `py -m meowDFer extract --src s_name --dest d_name`
-- `py -m meowDFer convert --src s_name --dest d_name`
-- `py -m meowDFer merge --src s_name --dest d_name --vol v_name.txt`
-- `py -m meowDFer all --src s_name --dest d_name --vol v_name.txt`
-- `py -m meowDFer cm --src s_name --dest d_name --vol v_name.txt`
+- `py -m src extract --src s_name --dest d_name`
+- `py -m src convert --src s_name --dest d_name`
+- `py -m src merge --src s_name --dest d_name --vol v_name.txt`
+- `py -m src all --src s_name --dest d_name --vol v_name.txt`
+- `py -m src cm --src s_name --dest d_name --vol v_name.txt`
 
 ## `extract`
 
@@ -19,7 +19,7 @@ Extracts multiple zip files into one folder.
 1. Create a folder in root, put all .zip files inside. 
 2. In the root of the directory, open the terminal and run:
 
-```py -m meowDFer extract --src s_name --dest d_name```
+```py -m src extract --src s_name --dest d_name```
 - s_name: name of folder with zip files
 - d_name: name of folder where files to be extracted in
 
@@ -32,7 +32,7 @@ Converts folder with images (chapters) into PDFs. Folders with images must conta
 1. Create a folder containing folders of images with chapter and number in name. Or have the folders from 'extract'.
 2. In the root of the directory, open terminal and run:
 
-```py -m meowDFer convert --src s_name --dest d_name```
+```py -m src convert --src s_name --dest d_name```
 - s_name: name of folder with image folders
 - d_name: name of folder where chapter PDFs to be extracted in
 
@@ -46,7 +46,7 @@ Merge many PDF s (chapters) into volumes, using a .txt file. In the .txt file wr
 2. Create a .txt file with comma separated values, which are upper limit chapter numbers.
 3. In the root directory, open terminal and run:
 
-```py -m meowDFer merge --src s_name --dest d_name --vols v_name.txt```
+```py -m src merge --src s_name --dest d_name --vols v_name.txt```
 - s_name: name of folder with chapter PDFs  
 - d_name: name of folder where volumes to be extracted in
 - v_name.txt: name of .txt files containing all limit chapter numbers
@@ -61,7 +61,7 @@ This combines all three commands: extract, convert, and merge. They will run one
 2. Create a .txt file with comma separated values, which are upper limit chapter numbers.
 3. In the root directory, open terminal and run:
 
-```py -m meowDFer all --src s_name --dest d_name --vols v_name.txt```
+```py -m src all --src s_name --dest d_name --vols v_name.txt```
 - s_name: name of folder with .zip files  
 - d_name: name of folder where volumes to be extracted in
 - v_name.txt: name of .txt files containing all limit chapter numbers
@@ -76,7 +76,7 @@ This combines two commands: convert, and merge. They will run one after another.
 2. Create a .txt file with comma separated values, which are upper limit chapter numbers.
 3. In the root directory, open terminal and run:
 
-```py -m meowDFer cm --src s_name --dest d_name --vols v_name.txt```
+```py -m src cm --src s_name --dest d_name --vols v_name.txt```
 - s_name: name of folder with image folders
 - d_name: name of folder where volumes to be extracted in
 - v_name.txt: name of .txt files containing all limit chapter numbers

@@ -1,6 +1,6 @@
 import pytest
 
-from meowDFer.utils import utils_naming as test
+from src.utils import utils_naming as test
 
 
 def test_extract_chapter_integer():
