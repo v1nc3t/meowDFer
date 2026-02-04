@@ -1,7 +1,12 @@
-import sys
 import argparse
 
-from commands import convert_command, extract_command, merge_command, all_command, cm_command
+from .commands import (
+    convert_command, 
+    extract_command,
+    merge_command, 
+    all_command, 
+    cm_command
+)
 
 logo = r"""
       |\      _,,,---,,_
@@ -92,7 +97,3 @@ def main():
     
     else:
         parser.print_help()
-
-
-if __name__ == "__main__":
-    main()

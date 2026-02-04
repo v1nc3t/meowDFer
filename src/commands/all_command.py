@@ -1,8 +1,8 @@
 import tempfile
 
-from utils.extract import extract_zips
-from utils.convert import convert_all_to_pdf
-from utils.merge import merge_to_volumes
+from ..utils.extract import extract_zips
+from ..utils.convert import convert_all_to_pdf
+from ..utils.merge import merge_to_volumes
 
 def run(args, name):
     src = args.src

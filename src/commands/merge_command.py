@@ -1,5 +1,5 @@
 
-from utils.merge import merge_to_volumes
+from ..utils.merge import merge_to_volumes
 
 def run(args, name):
     src = args.src

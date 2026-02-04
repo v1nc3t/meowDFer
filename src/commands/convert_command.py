@@ -1,5 +1,5 @@
 
-from utils.convert import convert_all_to_pdf
+from ..utils.convert import convert_all_to_pdf
 
 def run(args, name):
     src = args.src

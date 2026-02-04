@@ -1,7 +1,7 @@
 import tempfile
 
-from utils.convert import convert_all_to_pdf
-from utils.merge import merge_to_volumes
+from ..utils.convert import convert_all_to_pdf
+from ..utils.merge import merge_to_volumes
 
 def run(args, name):
     src = args.src
