@@ -4,8 +4,8 @@ from utils.merge import merge_to_volumes
 def run(args, name):
     src = args.src
     dest = args.dest
-    vals = args.vals
-    merge_to_volumes(src, dest, vals, name)
+    vols = args.vols
+    merge_to_volumes(src, dest, vols, name)
 
 def register_command(parser):
     parser.add_argument(
@@ -19,7 +19,7 @@ def register_command(parser):
         help="Name of destination folder where volumes are to be created"
     )
     parser.add_argument(
-        "--vals",
+        "--vols",
         type=str,
         help="Name of .txt where intervals for volums are located (include and chapter number separated by commas)"
     )

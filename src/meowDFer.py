@@ -1,9 +1,7 @@
-import os
 import sys
-import re
 import argparse
 
-from commands import convert_command, extract_command, merge_command
+from commands import convert_command, extract_command, merge_command, all_command, cm_command
 
 logo = r"""
       |\      _,,,---,,_
@@ -39,30 +37,59 @@ def main():
     )
     merge_command.register_command(merge_parser)
 
-    args = parser.parse_args()
+    # all in one command
+    all_parser = subparsers.add_parser(
+        "all", help="Extract, convert and merge all at once. (help: all -h)"
+    )
+    all_command.register_command(all_parser)
 
+    # covert and merge command
+    all_parser = subparsers.add_parser(
+        "cm", help="Convert and merge at once. (help: cm -h)"   
+    )
+    cm_command.register_command(all_parser)
+    
+
+    args = parser.parse_args()
+    
+    # extract zips
     if args.command == "extract":
         if not args.src or not args.dest:
             extract_parser.error("The --src and --dest flags are required when using extract")
-        print("Running extract...\n")
         extract_command.run(args)
 
+    # convert folders to PDFs
     elif args.command == "convert":
         if not args.src or not args.dest:
             convert_parser.error("The --src and --dest flags are required when using convert")
         
         name = input("Give name: ")
-        print("Running convert...\n")
         convert_command.run(args, name)
-    
+
+    # merge PDFs into volumes
     elif args.command == "merge":
         if not args.src or not args.dest:
-            merge_parser.error("The --src, --dest, and --vals flags are required when using merge")
+            merge_parser.error("The --src, --dest, and --vols flags are required when using merge")
         
         name = input("Give name: ")
-        print("Running merge...\n")
         merge_command.run(args, name)
 
+    # run all three: extract, convert, and merge one after another 
+    elif args.command == "all":
+        if not args.src or not args.dest:
+            merge_parser.error("The --src, --dest, and --vols flags are required when using all")
+
+        name = input("Give name: ")
+        all_command.run(args, name)
+
+    # run convert and merge one after another
+    elif args.command == "cm":
+        if not args.src or not args.dest:
+            merge_parser.error("The --src, --dest, and --vols flags are required when using cm")
+
+        name = input("Give name: ")
+        cm_command.run(args, name)
+    
     else:
         parser.print_help()
 
