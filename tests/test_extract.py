@@ -2,7 +2,7 @@ import os
 import pytest
 
 from zipfile import ZipFile, BadZipFile
-from src.utils import extract as test
+from meowDFer.utils import extract as test
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
