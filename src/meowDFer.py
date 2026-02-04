@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from commands import convert_command, extract_command, merge_command, all_command
+from commands import convert_command, extract_command, merge_command, all_command, cm_command
 
 logo = r"""
       |\      _,,,---,,_
@@ -43,6 +43,13 @@ def main():
     )
     all_command.register_command(all_parser)
 
+    # covert and merge command
+    all_parser = subparsers.add_parser(
+        "cm", help="Convert and merge at once. (help: cm -h)"   
+    )
+    cm_command.register_command(all_parser)
+    
+
     args = parser.parse_args()
     
     # extract zips
@@ -59,7 +66,7 @@ def main():
         name = input("Give name: ")
         convert_command.run(args, name)
 
-    # meerge PDFs into volumes
+    # merge PDFs into volumes
     elif args.command == "merge":
         if not args.src or not args.dest:
             merge_parser.error("The --src, --dest, and --vols flags are required when using merge")
@@ -75,6 +82,14 @@ def main():
         name = input("Give name: ")
         all_command.run(args, name)
 
+    # run convert and merge one after another
+    elif args.command == "cm":
+        if not args.src or not args.dest:
+            merge_parser.error("The --src, --dest, and --vols flags are required when using cm")
+
+        name = input("Give name: ")
+        cm_command.run(args, name)
+    
     else:
         parser.print_help()
 
