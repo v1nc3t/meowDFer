@@ -68,32 +68,28 @@ def main():
         if not args.src or not args.dest:
             convert_parser.error("The --src and --dest flags are required when using convert")
         
-        name = input("Give name: ")
-        convert_command.run(args, name)
+        convert_command.run(args)
 
     # merge PDFs into volumes
     elif args.command == "merge":
         if not args.src or not args.dest:
             merge_parser.error("The --src, --dest, and --vols flags are required when using merge")
         
-        name = input("Give name: ")
-        merge_command.run(args, name)
+        merge_command.run(args)
 
     # run all three: extract, convert, and merge one after another 
     elif args.command == "all":
         if not args.src or not args.dest:
             merge_parser.error("The --src, --dest, and --vols flags are required when using all")
 
-        name = input("Give name: ")
-        all_command.run(args, name)
+        all_command.run(args)
 
     # run convert and merge one after another
     elif args.command == "cm":
         if not args.src or not args.dest:
             merge_parser.error("The --src, --dest, and --vols flags are required when using cm")
 
-        name = input("Give name: ")
-        cm_command.run(args, name)
+        cm_command.run(args)
     
     else:
         parser.print_help()

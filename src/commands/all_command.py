@@ -4,10 +4,11 @@ from ..utils.extract import extract_zips
 from ..utils.convert import convert_all_to_pdf
 from ..utils.merge import merge_to_volumes
 
-def run(args, name):
+def run(args):
     src = args.src
     dest = args.dest
     vols = args.vols
+    name = args.dest
 
     print("\n\033[95mRunning all...\033[0m")
 

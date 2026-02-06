@@ -3,10 +3,11 @@ import tempfile
 from ..utils.convert import convert_all_to_pdf
 from ..utils.merge import merge_to_volumes
 
-def run(args, name):
+def run(args):
     src = args.src
     dest = args.dest
     vols = args.vols
+    name = args.dest
 
     with tempfile.TemporaryDirectory() as temp_converted:
         convert_all_to_pdf(src, temp_converted, name)

@@ -4,6 +4,7 @@ from ..utils.extract import extract_zips
 def run(args):
     src = args.src
     dest = args.dest
+    
     extract_zips(src, dest)
 
 def register_command(parser):

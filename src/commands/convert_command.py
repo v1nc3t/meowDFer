@@ -1,9 +1,11 @@
 
 from ..utils.convert import convert_all_to_pdf
 
-def run(args, name):
+def run(args):
     src = args.src
     dest = args.dest
+    name = args.dest
+
     convert_all_to_pdf(src, dest, name)
 
 def register_command(parser):

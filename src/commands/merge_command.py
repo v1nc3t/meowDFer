@@ -1,10 +1,12 @@
 
 from ..utils.merge import merge_to_volumes
 
-def run(args, name):
+def run(args):
     src = args.src
     dest = args.dest
     vols = args.vols
+    name = args.dest
+
     merge_to_volumes(src, dest, vols, name)
 
 def register_command(parser):
