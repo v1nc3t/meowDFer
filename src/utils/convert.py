@@ -30,7 +30,7 @@ def convert_all_to_pdf(src, dest, name):
             try:
                 convert_folder_to_pdf(path, dest, name)
             except Exception as e:
-                print(f"\033[91mFailed to convert folder `{folder}`:\033[0m {e}")
+                raise Exception(f"\033[91mFailed to convert folder `{folder}`:\033[0m {e}")
 
     print("\n\033[95mAll folders converted to PDFs\033[0m\n")
 
@@ -55,8 +55,7 @@ def convert_folder_to_pdf(src, dest, name):
         raise RuntimeError(f"\033[91mFailed to sort images in {src}\033[0m")
     
     if not images:
-        print(f"\033[91mNo images found in folder\033[0m")
-        return
+        raise ValueError(f"\033[91mNo images found in folder\033[0m")
 
     img_list = []
     for image in images:
@@ -70,8 +69,7 @@ def convert_folder_to_pdf(src, dest, name):
             print(f"\033[93mSkipping image `{image}`:\033[0m {e}")
 
     if not img_list:
-        print(f"\033[91mNo valid image in folder:\033[0m {src}")
-        return
+        raise ValueError(f"\033[91mNo valid image in folder:\033[0m {src}")
 
     first_img = img_list.pop(0)
     first_img.save(pdf_path, save_all=True, append_images=img_list)
