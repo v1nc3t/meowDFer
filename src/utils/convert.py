@@ -17,7 +17,14 @@ def convert_all_to_pdf(src, dest, name):
 
     os.makedirs(dest, exist_ok=True)
 
-    for folder in os.listdir(src):
+    folders = [f for f in os.listdir(src)]
+
+    if not folders:
+        raise ValueError("\033[91mNo folders found in given source folder\033[0m")
+    
+    folders = sorted(folders, key=u_name.extract_chapter_number)
+
+    for folder in folders:
         path = os.path.join(src, folder)
         if os.path.isdir(path):
             try:
