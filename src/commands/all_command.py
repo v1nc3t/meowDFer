@@ -1,6 +1,6 @@
 import tempfile
 
-from ..utils.extract import extract_zips
+# from ..utils.extract import extract_zips
 from ..utils.convert import convert_all_to_pdf
 from ..utils.merge import merge_to_volumes
 
@@ -13,7 +13,7 @@ def run(args):
     print("\n\033[95mRunning all...\033[0m")
 
     with tempfile.TemporaryDirectory() as tmp_extracted:
-        extract_zips(src, tmp_extracted)
+        # extract_zips(src, tmp_extracted)
 
         with tempfile.TemporaryDirectory() as temp_converted:
             convert_all_to_pdf(tmp_extracted, temp_converted, name)
