@@ -1,11 +1,16 @@
 [project]
 name = "meowDFer"
 version = "0.1.0"
-description = "Convert zipped image files into PDFs"
+description = "A CLI tool to convert zipped image folders into structured PDFs"
 requires-python = ">=3.10"
+authors = [
+    {name = "v1c3nt"}
+]
 
 dependencies = [
-    "Pillow", "pypdf"
+    "Pillow", 
+    "pypdf",
+    "rich>=13.0.0"
 ]
 
 [project.optional-dependencies]
@@ -13,5 +18,10 @@ dev = [
     "pytest"
 ]
 
+[project.scripts]
+meowdfer = "meowdfer:initiate"
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
