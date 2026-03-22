@@ -2,6 +2,8 @@
 *
 
 # except these
+!meowdfer.py
+
 !src/
 !src/**
 
