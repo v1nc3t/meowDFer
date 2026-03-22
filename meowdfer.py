@@ -6,7 +6,6 @@ from rich.console import Console
 from rich.live import Live
 from rich.text import Text
 from rich.traceback import install
-# from src.commands import convert_command, extract_command, merge_command
 from src.commands.extract import extract_zips
 from src.commands.convert import convert_pdf
 from src.commands.merge import merge_pdf
