@@ -4,7 +4,7 @@ import tempfile
 
 from PIL import Image
 from rich.console import Console
-from ...utils import utils_naming
+from ...utils import naming_utils
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 console = Console()
@@ -23,7 +23,7 @@ def run(src, dest, name):
             if not folders:
                 raise ValueError("No folders found in given source folder")
             
-            folders = sorted(folders, key=utils_naming.extract_chapter_number)
+            folders = sorted(folders, key=naming_utils.extract_chapter_number)
 
             for folder in folders:
                 folder_path = os.path.join(src_path, folder)
@@ -46,18 +46,18 @@ def convert_folder_to_pdf(src, dest, name):
     folder_name = os.path.basename(src.rstrip('/'))
     
     try:
-        chapter_number = utils_naming.extract_chapter_number(folder_name)
+        chapter_number = naming_utils.extract_chapter_number(folder_name)
     except ValueError as e:
         print(f"Skipping folder {folder_name}: {e}")
         return
 
-    pdf_name = utils_naming.create_chapter_name(name, chapter_number) + ".pdf"
+    pdf_name = naming_utils.create_chapter_name(name, chapter_number) + ".pdf"
     pdf_path = os.path.join(dest, pdf_name)
 
     try:
         images = sorted(
             [f for f in os.listdir(src) if f.endswith((".png", ".jpg", ".jpeg"))],
-            key=utils_naming.extract_page_number
+            key=naming_utils.extract_page_number
         )
     except Exception as e:
         raise RuntimeError(f"Failed to sort images in {src}.")

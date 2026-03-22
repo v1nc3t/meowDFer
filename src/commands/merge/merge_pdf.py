@@ -4,7 +4,7 @@ import tempfile
 
 from pypdf import PdfWriter
 from rich.console import Console
-from ...utils import utils_naming
+from ...utils import naming_utils
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 console = Console()
@@ -35,10 +35,10 @@ def run(src, dest, vols, name):
                 raise ValueError("No PDF files found in source folder.")
             
             # mapping chapters
-            pdfs = sorted(pdfs, key=utils_naming.extract_chapter_number)
+            pdfs = sorted(pdfs, key=naming_utils.extract_chapter_number)
             chapter_map = {}
             for f in pdfs:
-                ch = utils_naming.extract_chapter_number(f)
+                ch = naming_utils.extract_chapter_number(f)
                 if ch in chapter_map:
                     raise ValueError(f"Duplicate chapter detected: {ch}.")
                 chapter_map[ch] = f
@@ -53,7 +53,7 @@ def run(src, dest, vols, name):
                     raise ValueError(f"Invalid volume range: {start_ch} -> {end_ch}.")
 
                 merger = PdfWriter()
-                vol_name = utils_naming.create_volume_name(name, vol_num) + ".pdf"
+                vol_name = naming_utils.create_volume_name(name, vol_num) + ".pdf"
                 temp_vol_path = os.path.join(temp_path, vol_name)
 
                 for ch in range(start_ch, end_ch + 1):
