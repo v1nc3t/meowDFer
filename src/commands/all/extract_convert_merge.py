@@ -18,6 +18,6 @@ def run(src, dest, vols, name):
 
             merge_pdf.run(temp_converted, dest, vols, name=name)
 
-    console.print("[bold green]Full Pipeline (Extract -> Convert -> Merge) completed![/bold green]")
+    console.print("[bold green]All Pipeline (Extract -> Convert -> Merge) completed![/bold green]")
 
     
