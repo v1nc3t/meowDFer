@@ -9,8 +9,8 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 console = Console()
 
 def run(src_path, dest_path):
-    src_path = os.path.join(PROJECT_ROOT, src_path)
-    dest_path = os.path.join(PROJECT_ROOT, dest_path)
+    src_path = src if os.path.isabs(src) else os.path.join(PROJECT_ROOT, src)
+    dest_path = dest if os.path.isabs(dest) else os.path.join(PROJECT_ROOT, dest)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
@@ -20,14 +20,14 @@ def run(src_path, dest_path):
             zip_files = [f for f in os.listdir(src_path) if f.endswith(".zip")]
 
             if not zip_files:
-                console.print("[yellow]No zip files found to extract.[/yellow]")
-                return
+                raise ValueError("No zip files found in given source folder.")
             
             # extraction 
             for file_name in zip_files:
                 zip_path = os.path.join(src_path, file_name)
                 with ZipFile(zip_path, 'r') as zip_ref:
                     zip_ref.extractall(temp_dir)
+                
                 console.print(f"[green]Prepared:[/green] {file_name}")
 
             # move from temp to dest
@@ -44,3 +44,4 @@ def run(src_path, dest_path):
             console.print(f"Files are now in: [cyan]{dest_path}[/cyan]\n")
         except Exception as e:
             console.print(f"\n[bold red]Extraction Aborted:[/bold red] {e}")
+            raise

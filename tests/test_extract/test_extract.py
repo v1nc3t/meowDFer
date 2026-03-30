@@ -33,10 +33,19 @@ def create_bad_zip(src_path, num):
 
 # --- tests ---
 
+def test_bad_source(temp_dirs):
+    src_path, dest_path = temp_dirs
+
+    with pytest.raises(FileNotFoundError) as excinfo:
+        run("src_bad", dest_path)
+
+    assert not os.path.isdir(dest_path)
+
 def test_extract_empty(temp_dirs):
     src_path, dest_path = temp_dirs
     
-    run(src_path, dest_path)
+    with pytest.raises(ValueError) as excinfo:
+        run(src_path, dest_path)
 
     assert not os.path.isdir(dest_path)
 
@@ -64,7 +73,8 @@ def test_extract_bad_zips(temp_dirs):
 
     create_bad_zip(src_path, 1)
     
-    run(src_path, dest_path)
+    with pytest.raises(BadZipFile) as excinfo:
+        run(src_path, dest_path)
 
     assert not os.path.isdir(dest_path)
 
@@ -73,8 +83,9 @@ def test_extract_mixed_zips(temp_dirs):
 
     create_good_zip(src_path, 1)
     create_bad_zip(src_path, 2)
-
-    run(src_path, dest_path)
+    
+    with pytest.raises(BadZipFile) as excinfo:
+        run(src_path, dest_path)
 
     extracted_file = os.path.join(dest_path, "hello.txt")
 
