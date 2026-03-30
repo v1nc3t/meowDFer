@@ -9,9 +9,9 @@ from ...utils import naming_utils
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 console = Console()
 
-def run(src, dest, name):
-    src_path = os.path.join(PROJECT_ROOT, src)
-    dest_path = os.path.join(PROJECT_ROOT, dest)
+def run(src_path, dest_path, name):
+    src_path = src_path if os.path.isabs(src_path) else os.path.join(PROJECT_ROOT, src_path)
+    dest_path = dest_path if os.path.isabs(dest_path) else os.path.join(PROJECT_ROOT, dest_path)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
@@ -41,6 +41,7 @@ def run(src, dest, name):
 
         except Exception as e:
             console.print(f"\n[bold red]Conversion Aborted:[/bold red] {e}")
+            raise
 
 def convert_folder_to_pdf(src, dest, name):
     folder_name = os.path.basename(src.rstrip('/'))
@@ -60,7 +61,7 @@ def convert_folder_to_pdf(src, dest, name):
             key=naming_utils.extract_page_number
         )
     except Exception as e:
-        raise RuntimeError(f"Failed to sort images in {src}.")
+        raise ValueError(f"Failed to sort images in {src}.")
     
     if not images:
         raise ValueError(f"No images found in folder.")
@@ -74,7 +75,7 @@ def convert_folder_to_pdf(src, dest, name):
                 img = img.convert('RGB')
             img_list.append(img)
         except Exception as e:
-            print(f"Skipping image `{image}`: {e}")
+            raise RuntimeError(f"Could not process {image}. Error: {e}")
 
     if not img_list:
         raise ValueError(f"No valid images in folder: {src}")
