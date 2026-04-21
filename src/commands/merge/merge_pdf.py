@@ -9,14 +9,17 @@ from ...utils import naming_utils
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 console = Console()
 
-def run(src, dest, vols, name):
-    src_path = os.path.join(PROJECT_ROOT, src)
-    dest_path = os.path.join(PROJECT_ROOT, dest)
-    vols_path = os.path.join(PROJECT_ROOT, vols)
+def run(src_path, dest_path, vols_path, name):
+    src_path = src_path if os.path.isabs(src_path) else os.path.join(PROJECT_ROOT, src_path)
+    dest_path = dest_path if os.path.isabs(dest_path) else os.path.join(PROJECT_ROOT, dest_path)
+    vols_path = vols_path if os.path.isabs(vols_path) else os.path.join(PROJECT_ROOT, vols_path)
 
     with tempfile.TemporaryDirectory() as temp_path:
         try:
             # validate vols and src
+            if not os.path.isdir(src_path):
+                raise FileNotFoundError(f"Source folder not found: {src_path}")
+            
             if not os.path.isfile(vols_path):
                 raise FileNotFoundError(f"Volume intervals file not found: {vols_path}")
             
@@ -26,9 +29,6 @@ def run(src, dest, vols, name):
 
             if not intervals or intervals != sorted(intervals):
                 raise ValueError("Volume intervals must be a non-empty, strictly increasing list.")
-            
-            if not os.path.isdir(src_path):
-                raise FileNotFoundError(f"Source folder not found: {src_path}")
             
             pdfs = [f for f in os.listdir(src_path) if f.lower().endswith(".pdf")]
             if not pdfs:
@@ -85,3 +85,4 @@ def run(src, dest, vols, name):
             console.print(f"\n[bold green]All volumes merged successfully to:[/bold green] {dest_path}\n")
         except Exception as e:
             console.print(f"\n[bold red]Merge Aborted:[/bold red] {e}.")
+            raise

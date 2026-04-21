@@ -20,7 +20,6 @@ def create_good_zip(src_path, num):
     with ZipFile(zip_path, "w") as z:
         z.writestr(f"{num}.txt", str(num))
     
-    return zip_path
 
 def create_bad_zip(src_path, num):
     filename = f"bad_{num}.zip"
@@ -29,11 +28,9 @@ def create_bad_zip(src_path, num):
     with open(zip_path, "wb") as f:
         f.write(b"This is not a zip file.")
 
-    return zip_path
-
 # --- tests ---
 
-def test_bad_source(temp_dirs):
+def test_extract_bad_source(temp_dirs):
     src_path, dest_path = temp_dirs
 
     with pytest.raises(FileNotFoundError) as excinfo:

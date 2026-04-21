@@ -9,8 +9,8 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 console = Console()
 
 def run(src_path, dest_path):
-    src_path = src if os.path.isabs(src) else os.path.join(PROJECT_ROOT, src)
-    dest_path = dest if os.path.isabs(dest) else os.path.join(PROJECT_ROOT, dest)
+    src_path = src_path if os.path.isabs(src_path) else os.path.join(PROJECT_ROOT, src_path)
+    dest_path = dest_path if os.path.isabs(dest_path) else os.path.join(PROJECT_ROOT, dest_path)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
