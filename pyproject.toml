@@ -24,4 +24,6 @@ meowdfer = "meowdfer:initiate"
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
+norecursedirs = ["src"] 
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
