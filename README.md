@@ -1,84 +1,123 @@
 # meowDFer
-### Extract, Convert, Merge
-This is a tool made to simplify the processes mentioned above.
 
-## How to use 
+Compile images into PDF files. From either zip or folders, convert into chapters or volumes.
 
-##### Example commands:
+## features
+- extract zip files
+- convert image folders into PDF files
+- merge chapter PDF file into volume PDF files
 
-- `py -m src extract --src "s_name" --dest "d_name"`
-- `py -m src convert --src "s_name" --dest "d_name"`
-- `py -m src merge --src "s_name" --dest "d_name" --vol "v_name.txt"`
-- `py -m src all --src "s_name" --dest "d_name" --vol "v_name.txt"`
-- `py -m src cm --src "s_name" --dest "d_name" --vol "v_name.txt"`
 
-## `extract`
+## installation & setup
 
-Extracts multiple zip files into one folder.
+### linux
 
-1. Create a folder in root, put all .zip files inside. 
-2. In the root of the directory, open the terminal and run:
+1. open terminal & clone repository into desirred folder
+```sh
+$ git clone https://github.com/v1nc3t/meowDFer.git
+$ cd meowDFer-cli
+```
 
-```py -m src extract --src "s_name" --dest "d_name"```
-- s_name: name of folder with zip files
-- d_name: name of folder where files to be extracted in
+2. create virtual enviroment
+``` sh
+$ python3 -m venv .venv
+```
 
-3. Folder with d_name will be created in root with extracted zip files
+3. activate envirometn
+```sh
+$ source .venv/bin/activate
+```
 
-## `convert`
+4. install dependacies
+```sh
+$ pip install .
+```
 
-Converts folder with images (chapters) into PDFs. Folders with images must contain 'chapter', 'ch.', or 'c' with a number. Decimal number chapters get skipped.
 
-1. Create a folder containing folders of images with chapter and number in name. Or have the folders from 'extract'.
-2. In the root of the directory, open terminal and run:
+## usage
 
-```py -m src convert --src "s_name" --dest "d_name"```
-- s_name: name of folder with image folders
-- d_name: name of folder where chapter PDFs to be extracted in
+#### return to existing enviroment
+```sh
+$ source .venv/bin/activate
+```
 
-3. Folder with d_name will be created in root with PDFs of chapters.
+### basic syntax
+for more information
 
-## `merge`
+```sh
+$ python3 meowdfer.py -h
+```
 
-Merge many PDF s (chapters) into volumes, using a .txt file. In the .txt file write the upper limit chapter number of a volume separated by a comma. (e.g. "3, 5, 7, 9")
+#### extract
+```sh
+$ python3 meowdfer.py --extract --src zips_folder --dest out_folder
+```
 
-1. Create a folder containing PDF chapters, or get them from step above.
-2. Create a .txt file with comma separated values, which are upper limit chapter numbers.
-3. In the root directory, open terminal and run:
+#### convert
+```sh
+$ python3 meowdfer.py --convert --src img_folder --dest out_folder --name example
+```
 
-```py -m src merge --src "s_name" --dest "d_name" --vols "v_name.txt"```
-- s_name: name of folder with chapter PDFs  
-- d_name: name of folder where volumes to be extracted in
-- v_name.txt: name of .txt files containing all limit chapter numbers
+#### merge
+```sh
+$ python3 meowdfer.py --merge --src pdf_folder --dest out_folder --vols ./vols.txt --name example
+```
 
-4. Folder with d_name will be created in root with volumes.
+#### pipelines
+```sh
+$ python3 meowdfer.py --convert-merge --src zips_folder --dest out_folder --vols ./vols.txt --name example
+```
+or
+```sh
+$ python3 meowdfer.py --all --src zips_folder --dest out_folder --vols ./vols.txt --name example
+```
 
-## `all`
+## cli options
 
-This combines all three commands: extract, convert, and merge. They will run one after another.
+| command flags          | description                                                                  |
+|------------------------|------------------------------------------------------------------------------|
+| '-e, --extract'        | extracts many .zip files from an input directory                             |
+| '-c, --convert'        | converts folders with img files into PDF files (img folders -> chapters)     |
+| '-m, --merge'          | merges PDF files based on a vols.txt file (chapters -> volumes)              |
+| '-cm, --convert-merge' | pipelines convert, and merge                                                 |
+| '-a, --all'            | pipelines extract, convert, and merge                                        |
 
-1. Create a folder in root, put all .zip files inside.
-2. Create a .txt file with comma separated values, which are upper limit chapter numbers.
-3. In the root directory, open terminal and run:
+| data flags             | description                                                                  |
+|------------------------|------------------------------------------------------------------------------|
+| '-s, --src'            | source folder for input                                                      |
+| '-d, --dest'           | destination folder of output (if not exists, will be created)                |
+| '-v, --vols'           | file with increasing numbers separated by ',' to delimit chapters in a volume|
+| '-n, --name'           | name PDF files (otherwise they inherit dest folder name)                     |
 
-```py -m src all --src "s_name" --dest "d_name" --vols "v_name.txt"```
-- s_name: name of folder with .zip files  
-- d_name: name of folder where volumes to be extracted in
-- v_name.txt: name of .txt files containing all limit chapter numbers
 
-4. Folder with d_name will be created in root with volumes.
+## running tests
+1.
+```sh
+$ pip install .[dev]
+```
 
-## `cm`
+2.
+```sh
+$ python3 -m pytest -v
+```
 
-This combines two commands: convert, and merge. They will run one after another.
+## dependencies
 
-1. Create a folder containing folders of images with chapter and number in name. Or have the folders from 'extract'.
-2. Create a .txt file with comma separated values, which are upper limit chapter numbers.
-3. In the root directory, open terminal and run:
+- Pillow
+- pypdf
+- rich
 
-```py -m src cm --src "s_name" --dest "d_name" --vols "v_name.txt"```
-- s_name: name of folder with image folders
-- d_name: name of folder where volumes to be extracted in
-- v_name.txt: name of .txt files containing all limit chapter numbers
+install manually"
+```sh
+$ pip install <dependancy>
+``` 
 
-4. Folder with d_name will be created in root with volumes.
+
+## contributing
+
+1. fork the repository
+2. create feature branch
+3. commit changes
+4. open a pull request
+
+## licence
