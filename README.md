@@ -122,3 +122,5 @@ $ pip install <dependancy>
 4. open a pull request
 
 ## licence
+
+GNU General Public License v3
