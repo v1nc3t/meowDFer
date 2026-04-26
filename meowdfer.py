@@ -9,62 +9,37 @@ from rich.traceback import install
 from src.commands.extract import extract_zips
 from src.commands.convert import convert_pdf
 from src.commands.merge import merge_pdf
-from src.commands.all import extract_convert_merge
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 install(show_locals=True)
 
 def initiate():
-    custom_usage = "meowdfer [-h] [-e SRC DEST] [-c SRC DEST [NAME]] [-m SRC DEST [NAME]] [-a SRC DEST [NAME]] [-cm SRC DEST [NAME]]"
-
     parser = argparse.ArgumentParser(
-        prog="meowdfer",
-        usage=custom_usage,
+        prog="meowDFer",
         description="A tool to convert image folders to PDFs."
     )
 
-    parser.add_argument(
-        "-e",
-        "--extract",
-        nargs=2,
-        metavar=("SRC", "DEST"),
-        help="Extracts zip files. Requires [src] and [dest]." 
-    )
+    # action flags (required: must pick one)
+    action_group = parser.add_mutually_exclusive_group(required=True)
+    action_group.add_argument("-e", "--extract", action="store_true", help="extract zip files.")
+    action_group.add_argument("-c", "--convert", action="store_true", help="convert image folders to PDFs.")
+    action_group.add_argument("-m", "--merge", action="store_true", help="merge PDFs based on vols.txt.")
+    action_group.add_argument("-a", "--all", action="store_true", help="full pipeline: extract -> convert -> merge.")
+    action_group.add_argument("-cm", "--convert-merge", action="store_true", help="half pipeline: convert -> merge.")
 
-    parser.add_argument(
-        "-c",
-        "--convert",
-        nargs="+",
-        metavar=("SRC DEST", "NAME"),
-        help="Converts folders with images int pdfs. Requires [src] and [dest]. Optional [NAME]."
-    )
+    # data flags 
+    parser.add_argument("-s", "--src", required=True, help="source path (directory)")
+    parser.add_argument("-d", "--dest", required=True, help="destination directory (if not exists will be created).")  
+    parser.add_argument("-v", "--vols", help="path to vols.txt (Required for merge, all, convert-merge).")
+    parser.add_argument("-n", "--name", help="optinal name output (files named differently than dest name).")
 
-    parser.add_argument(
-        "-m",
-        "--merge",
-        nargs="+",
-        metavar=("SRC DEST VOLS", "NAME"),
-        help="Merge PDFs based on vols.txt . Requires [src], [dest], [vols]. Optional [NAME]."
-    )
+    args = parser.parse_args()
 
-    parser.add_argument(
-        "-a",
-        "--all",
-        nargs="+",
-        metavar=("SRC DEST VOLS", "NAME"),
-        help="Extract, convert and merge one after another. Requires [src] and [dest]. Optional [NAME]."
-    )
+    if (args.merge or args.all or args.convert_merge) and not args.vols:
+        parser.error("the --vols/-v argument is required when running merge, all, or convert-merge.")
 
-    parser.add_argument(
-        "-cm",
-        "--convert-merge",
-        nargs="+",
-        metavar=("SRC DEST VOLS", "NAME"),
-        help="Convert and merge one after another. Requires [src] and [dest]. Optional [NAME]."
-    )
-
-    return parser.parse_args()
+    return args
 
 banner = r"""[purple]
                                                  /$$$$$$$  /$$$$$$$$                 
@@ -80,32 +55,47 @@ banner = r"""[purple]
                                                                 by v1c3nt                                                                                                                             
 [/purple]"""
 
-if __name__ == "__main__":
-    args = initiate()
+
+def handle_extract(src, dest):
+    extract_zips.run(src, dest)
+
+def handle_convert(src, dest, name):
+    final_name = name if name else os.path.basename(dest)
+    convert_pdf.run(src, dest, final_name)
+
+def handle_merge(src, dest, vols, name):
+    final_name = name if name else os.path.basename(dest)
+    merge_pdf.run(src, dest, vols, final_name)
+
+def main():
+    args = initiate()    
 
     console = Console()
     console.print(banner)
-    
-    if args.extract:
-        if len(args.extract) == 2:
-            extract_zips.run(args.extract[0], args.extract[1])
-        else:
-            console.print("[red]error: --extract requires at least a source and destination path.[/red]")
 
+    if args.extract:
+        with console.status("[bold green]Processing...", spinner="dots"):
+            handle_extract(args.src, args.dest)
+    
     elif args.convert:
-        if len(args.convert) == 2:
-            convert_pdf.run(args.convert[0], args.convert[1], name=args.convert[1])
-        else: 
-            console.print("[red]error: --convert requires at least a source and destination path.[/red]")
+        with console.status("[bold green]Processing...", spinner="dots"):
+            handle_convert(args.src, args.dest, args.name)
 
     elif args.merge:
-        if len(args.merge) == 3:
-            merge_pdf.run(args.merge[0], args.merge[1], args.merge[2], name=args.merge[1])
-        else:
-            console.print("[red]error: --merge requires at least a source, destination, and volume-intervals path.[/red]")
+        with console.status("[bold green]Processing...", spinner="dots"):
+            handle_merge(args.src, args.dest, args.vols, args.name)
+    
+    elif args.convert_merge:
+        with console.status("[bold green]Processing...", spinner="dots"):
+            handle_extract(args.src, args.dest)
+            handle_convert(args.src, args.dest, args.name)
 
     elif args.all:
-        if len(args.all) == 3:
-            extract_convert_merge.run(args.merge[0], args.merge[1], args.merge[2], name=args.merge[1])
-        else:
-            console.print("[red]error: --all requires at least a source, destination, and volume-intervals path.[/red]")
+        with console.status("[bold green]Processing...", spinner="dots"):
+            handle_extract(args.src, args.dest)
+            handle_convert(args.src, args.dest, args.name)
+            handle_merge(args.src, args.dest, args.vols, args.name)
+
+
+if __name__ == "__main__":
+    main()
