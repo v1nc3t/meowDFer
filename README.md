@@ -106,8 +106,9 @@ $ python3 -m pytest -v
 - Pillow
 - pypdf
 - rich
+- pytest
 
-install manually"
+install manually:
 ```sh
 $ pip install <dependancy>
 ``` 
