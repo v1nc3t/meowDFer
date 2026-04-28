@@ -70,7 +70,7 @@ def main():
 
     if args.extract:
         with console.status("[bold green]Processing...", spinner="dots"):
-            extract_zips.run(args.src, args.dest)
+            extract_zips.run(args.src, args.dest, to_skip=True, console=console)
     
     elif args.convert:
         with console.status("[bold green]Processing...", spinner="dots"):
