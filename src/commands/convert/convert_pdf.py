@@ -22,6 +22,8 @@ def run(src_path, dest_path, name, console):
                 shutil.rmtree(d)
             shutil.move(s, d)
 
+    console.print("[bold green]Convert completed![/bold green]")
+
 def convert(src_path, dest_path, name, console):
     try:
         folders = get_folders(src_path)
@@ -32,17 +34,22 @@ def convert(src_path, dest_path, name, console):
 
     for folder in sorted_folders:
         folder_path = os.path.join(src_path, folder)
+        folder_name = os.path.basename(folder_path.rstrip('/'))
 
         try:
-            convert_folder_to_pdf(folder_path, dest_path, name, console)
+            chapter_number = extract_chapter_number(folder_name, False)
+        except ValueError as e:
+            console.print(f"[bold yellow]Skipped:[/bold yellow] {e}")
+            continue
+
+        try:
+            pdf_name = convert_folder_to_pdf(folder_path, dest_path, chapter_number, name, console)
+            console.print(f"[blue]Staged:[/blue] {pdf_name}")
         except Exception as e:
             console.print(f"[bold red]Failed to process {folder}:[/bold red] {e}")
             return
 
-def convert_folder_to_pdf(src, dest, name, console):
-    folder_name = os.path.basename(src.rstrip('/'))
-    
-    chapter_number = extract_chapter_number(folder_name)
+def convert_folder_to_pdf(src, dest, chapter_number, name, console):
     
     pdf_name = create_chapter_name(name, chapter_number) + ".pdf"
     pdf_path = os.path.join(dest, pdf_name)
@@ -71,5 +78,5 @@ def convert_folder_to_pdf(src, dest, name, console):
 
     first_img = img_list.pop(0)
     first_img.save(pdf_path, save_all=True, append_images=img_list)
-    
-    console.print(f" [blue]Staged:[/blue] {pdf_name}")
+
+    return pdf_name

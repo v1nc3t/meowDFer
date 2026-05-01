@@ -6,22 +6,23 @@ def create_chapter_name(name, chapter_number):
 def create_volume_name(name, volume_number):
     return f"{name} Volume {volume_number}"
 
-def extract_chapter_number(file_name):
+def extract_chapter_number(file_name, allow_decimal=True):
     match = re.search(
         r'(?i)\b(?:chapter|ch\.?|c)\s*(\d+(?:\.\d+)?)\b',
         file_name
     )
 
     if not match:
-        print(f"No chapter number found")
-        return None
+        raise ValueError(f"No chapter number found in: {file_name}")
     
     number_str = match.group(1)
-    if '.' in number_str:
-        print(f"Decimal chapter are skipped: {number_str}")
-        return None
+    
+    if '.' in number_str and not allow_decimal:
+        raise ValueError(f"Decimal chapter: {number_str}")
 
-    return int(number_str)
+    num = float(number_str)
+
+    return int(num) if num.is_integer() else num
 
 def extract_page_number(file_name):
 
