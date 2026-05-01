@@ -14,6 +14,8 @@ from rich.traceback import install
 from src.commands.extract import extract_zips
 from src.commands.convert import convert_pdf
 from src.commands.merge import merge_pdf
+from src.commands.convert_merge import convert_merge
+from src.commands.all import extract_convert_merge
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
@@ -60,18 +62,6 @@ banner = r"""[purple]
                                                                 by v1c3nt                                                                                                                             
 [/purple]"""
 
-
-def handle_extract(src, dest):
-    extract_zips.run(src, dest)
-
-def handle_convert(src, dest, name):
-    final_name = name if name else os.path.basename(dest)
-    convert_pdf.run(src, dest, final_name)
-
-def handle_merge(src, dest, vols, name):
-    final_name = name if name else os.path.basename(dest)
-    merge_pdf.run(src, dest, vols, final_name)
-
 def main():
     args = initiate()    
 
@@ -80,26 +70,27 @@ def main():
 
     if args.extract:
         with console.status("[bold green]Processing...", spinner="dots"):
-            handle_extract(args.src, args.dest)
+            extract_zips.run(args.src, args.dest, to_skip=True, console=console)
     
     elif args.convert:
         with console.status("[bold green]Processing...", spinner="dots"):
-            handle_convert(args.src, args.dest, args.name)
+            final_name = args.name if args.name else os.path.basename(args.dest)
+            convert_pdf.run(args.src, args.dest, final_name, console=console)
 
     elif args.merge:
         with console.status("[bold green]Processing...", spinner="dots"):
-            handle_merge(args.src, args.dest, args.vols, args.name)
+            final_name = args.name if args.name else os.path.basename(args.dest)
+            merge_pdf.run(args.src, args.dest, args.vols, final_name, console=console)
     
     elif args.convert_merge:
         with console.status("[bold green]Processing...", spinner="dots"):
-            handle_extract(args.src, args.dest)
-            handle_convert(args.src, args.dest, args.name)
+            inal_name = args.name if args.name else os.path.basename(args.dest)
+            convert_merge.run(args.src, args.dest, args.vols, final_name)
 
     elif args.all:
         with console.status("[bold green]Processing...", spinner="dots"):
-            handle_extract(args.src, args.dest)
-            handle_convert(args.src, args.dest, args.name)
-            handle_merge(args.src, args.dest, args.vols, args.name)
+            final_name = args.name if args.name else os.path.basename(args.dest)
+            extract_convert_merge.run(args.src, args.dest, args.vols, final_name)
 
 
 if __name__ == "__main__":
