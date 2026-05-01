@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 
-from ...utils.file_utils import get_files
+from ...utils.file_utils import get_zip_files
 from zipfile import ZipFile, BadZipFile
 
 def run(src_path, dest_path, to_skip, console):
@@ -22,7 +22,7 @@ def run(src_path, dest_path, to_skip, console):
 
 def extract(src_path, dest_path, to_skip, console):
     try:
-        zip_files = get_files(src_path)
+        zip_files = get_zip_files(src_path)
     except (FileNotFoundError, ValueError) as e:
         console.print(f"bold red]Error:[/bold red] {e}")
 

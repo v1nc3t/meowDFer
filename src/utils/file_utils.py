@@ -1,6 +1,6 @@
 import os
 
-def get_files(src):
+def get_zip_files(src):
     if not os.path.exists(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
 
