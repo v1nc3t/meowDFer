@@ -24,12 +24,12 @@ def get_folders(src):
     
     return folders
     
-def sort_folders_chapters(folders):
-    if not folders:
+def sort_chapters(files):
+    if not files:
         raise ValueError(f"No folders found to sort.")
     
     sorted_folders = sorted(
-        (f for f in folders if extract_chapter_number(f) is not None),
+        (f for f in files if extract_chapter_number(f) is not None),
         key=extract_chapter_number
     )
 
@@ -55,3 +55,44 @@ def sort_page_number(files):
     )
 
     return sorted_files
+
+def get_pdfs(src):
+    if not os.path.isdir(src):
+        raise FileNotFoundError(f"Source directory not found: {src}")
+    
+    pdfs = [f for f in os.listdir(src) if f.lower().endswith(".pdf")]
+
+    if not pdfs:
+        raise ValueError("No PDF files found.")
+    
+    return pdfs
+    
+def get_volumes_file(src):
+    if not os.path.isfile(src):
+        raise FileNotFoundError(f"Volume intervals file not found: {src}")
+
+    with open(src) as f:
+        raw_data = f.read().replace('\n', '').split(",")
+        intervals = [int(i.strip()) for i in raw_data if i.strip()]
+
+    if not intervals:
+        raise ValueError("Volume intervals must be a non-empty list")
+    
+    if intervals != sorted(intervals):
+        raise ValueError("Volume intervals must be a strictly increasing list")
+    
+    return intervals
+
+def get_chapter_map(files):
+    chapter_map = {}
+    
+    for f in files:
+        ch = extract_chapter_number(f)
+
+        if ch in chapter_map:
+            raise ValueError(f"Duplicate chapter detected: {ch}.")
+        
+        chapter_map[ch] = f
+    
+    return chapter_map
+    

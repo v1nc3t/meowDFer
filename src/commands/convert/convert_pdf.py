@@ -5,7 +5,7 @@ import tempfile
 from PIL import Image
 from rich.console import Console
 from ...utils.naming_utils import extract_chapter_number, create_chapter_name
-from ...utils.file_utils import get_folders, sort_folders_chapters, get_images, sort_page_number
+from ...utils.file_utils import get_folders, sort_chapters, get_images, sort_page_number
 
 def run(src_path, dest_path, name, console):
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -25,7 +25,7 @@ def run(src_path, dest_path, name, console):
 def convert(src_path, dest_path, name, console):
     try:
         folders = get_folders(src_path)
-        sorted_folders = sort_folders_chapters(folders)
+        sorted_folders = sort_chapters(folders)
     except Exception as e:
         console.print(f"[bold red]Error:[/bold red] {e}")
         return
