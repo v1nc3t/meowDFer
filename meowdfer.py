@@ -90,7 +90,7 @@ def main():
     elif args.all:
         with console.status("[bold green]Processing...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(args.dest)
-            extract_convert_merge.run(args.src, args.dest, args.vols, final_name)
+            extract_convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
 
 
 if __name__ == "__main__":
