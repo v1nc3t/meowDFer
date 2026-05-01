@@ -8,6 +8,7 @@ from ...utils import naming_utils
 from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
 
 def run(src_path, dest_path, vols_path, name, console):
+    console.print("[bold green]Merge started[/bold green]")
     with tempfile.TemporaryDirectory() as temp_dir:
         merge(src_path, temp_dir, vols_path, name, console)
 
@@ -66,7 +67,7 @@ def merge(src, dest, vols, name, console):
                 merger.write(f_out)
             merger.close()
 
-            console.print(f" [blue]Staged:[/blue] {vol_name} (Chapters {start_ch}-{end_ch})")
+            console.print(f"[blue]Staged:[/blue] {vol_name} (Chapters {start_ch}-{end_ch})")
             vol_num += 1
             prev = val
         except ValueError as e:

@@ -29,7 +29,7 @@ def sort_chapters(files):
         raise ValueError(f"No folders found to sort.")
     
     sorted_folders = sorted(
-        (f for f in files if extract_chapter_number(f) is not None),
+        (f for f in files if extract_chapter_number(f)),
         key=extract_chapter_number
     )
 
@@ -85,7 +85,7 @@ def get_volumes_file(src):
 
 def get_chapter_map(files):
     chapter_map = {}
-    
+
     for f in files:
         ch = extract_chapter_number(f)
 
