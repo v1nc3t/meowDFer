@@ -13,5 +13,3 @@ def run(src, dest, vols, name, console):
         convert_pdf.run(src, temp_converted, name=name)
 
         merge_pdf.run(temp_converted, dest, vols, name, console)
-
-    console.print("[bold green]CM Pipeline (Convert -> Merge) completed![/bold green]")

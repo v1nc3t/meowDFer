@@ -22,8 +22,6 @@ def run(src_path, dest_path, name, console):
                 shutil.rmtree(d)
             shutil.move(s, d)
 
-    console.print("[bold green]Convert completed![/bold green]")
-
 def convert(src_path, dest_path, name, console):
     try:
         folders = get_folders(src_path)

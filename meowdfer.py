@@ -69,28 +69,33 @@ def main():
     console.print(banner)
 
     if args.extract:
-        with console.status("[bold green]Processing...", spinner="dots"):
+        with console.status("[bold green]Extracting...", spinner="dots"):
             extract_zips.run(args.src, args.dest, to_skip=True, console=console)
+            console.print("[bold green]Extract completed![/bold green]")
     
     elif args.convert:
-        with console.status("[bold green]Processing...", spinner="dots"):
+        with console.status("[bold green]Converting...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(args.dest)
             convert_pdf.run(args.src, args.dest, final_name, console=console)
+            console.print("[bold green]Convert completed![/bold green]")
 
     elif args.merge:
-        with console.status("[bold green]Processing...", spinner="dots"):
+        with console.status("[bold green]Merging...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(args.dest)
             merge_pdf.run(args.src, args.dest, args.vols, final_name, console=console)
+            console.print("[bold green]Merge completed![/bold green]")
     
     elif args.convert_merge:
-        with console.status("[bold green]Processing...", spinner="dots"):
+        with console.status("[bold green]Pipeline...", spinner="dots"):
             inal_name = args.name if args.name else os.path.basename(args.dest)
             convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
+            console.print("[bold green]CM pipeline (Convert -> Merge) completed![/bold green]")
 
     elif args.all:
-        with console.status("[bold green]Processing...", spinner="dots"):
+        with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(args.dest)
             extract_convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
+            console.print("[bold green]All pipeline (Extract -> Convert -> Merge) completed![/bold green]")
 
 
 if __name__ == "__main__":

@@ -19,8 +19,6 @@ def run(src_path, dest_path, to_skip, console):
             if os.path.exists(d) and os.path.isdir(d):
                 shutil.rmtree(d)
             shutil.move(s, d)
-    
-    console.print("[bold green]Extract completed![/bold green]")
 
 def extract(src_path, dest_path, to_skip, console):
     try:
