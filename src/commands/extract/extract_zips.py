@@ -19,6 +19,8 @@ def run(src_path, dest_path, to_skip, console):
             if os.path.exists(d) and os.path.isdir(d):
                 shutil.rmtree(d)
             shutil.move(s, d)
+    
+    console.print("[bold green]Extract completed![/bold green]")
 
 def extract(src_path, dest_path, to_skip, console):
     try:
@@ -34,11 +36,11 @@ def extract(src_path, dest_path, to_skip, console):
         try:
             with ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(dest_path)
-            console.print(f"[green]Prepared:[/green] {file_name}")
+            console.print(f"[blue]Staged:[/blue] {file_name}")
         except Exception as e:
             if to_skip:
-                console.print(f"[bold yellow]Skipped: {file_name}.[/bold yellow]")
+                console.print(f"[bold yellow]Skipped: {file_name}[/bold yellow]")
                 continue
         
-            console.print(f"[bold red]Fatal error: {file_name}.[/bold red]")
-            raise e
+            console.print(f"[bold red]Error: {file_name}.[/bold red]")
+            return
