@@ -4,73 +4,59 @@ import tempfile
 
 from PIL import Image
 from rich.console import Console
-from ...utils.naming_utils import extract_chapter_number, create_chapter_name, extract_page_number
+from ...utils.naming_utils import extract_chapter_number, create_chapter_name
+from ...utils.file_utils import get_folders, sort_folders_chapters, get_images, sort_page_number
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-console = Console()
-
-def run(src_path, dest_path, name):
-    src_path = src_path if os.path.isabs(src_path) else os.path.join(PROJECT_ROOT, src_path)
-    dest_path = dest_path if os.path.isabs(dest_path) else os.path.join(PROJECT_ROOT, dest_path)
-
+def run(src_path, dest_path, name, console):
     with tempfile.TemporaryDirectory() as temp_dir:
-        try:
-            if not os.path.isdir(src_path):
-                raise FileNotFoundError(f"Source folder not found: {src_path}")
+        convert(src_path, dest_path, name, console)
 
-            folders = [f for f in os.listdir(src_path) if os.path.isdir(os.path.join(src_path, f))]
+        # move from temp to dest
+        os.makedirs(dest_path, exist_ok=True)
 
-            if not folders:
-                raise ValueError("No folders found in given source folder")
-            
-            folders = sorted(
-                (f for f in folders if extract_chapter_number(f) is not None), 
-                key=extract_chapter_number
-            )
+        for item in os.listdir(temp_dir):
+            s = os.path.join(temp_dir, item)
+            d = os.path.join(dest_path, item)
 
-            for folder in folders:
-                folder_path = os.path.join(src_path, folder)
+            if os.path.exists(d) and os.path.isdir(d):
+                shutil.rmtree(d)
+            shutil.move(s, d)
 
-                convert_folder_to_pdf(folder_path, temp_dir, name)
-            
-            os.makedirs(dest_path, exist_ok=True)
-            for file_name in os.listdir(temp_dir):
-                shutil.move(
-                    os.path.join(temp_dir, file_name), 
-                    os.path.join(dest_path, file_name)
-                )
-            
-            console.print(f"[bold green]All folders converted successfully to:[/bold green] {dest_path}")
-
-        except Exception as e:
-            console.print(f"\n[bold red]Conversion Aborted:[/bold red] {e}")
-            raise
-
-def convert_folder_to_pdf(src, dest, name):
-    folder_name = os.path.basename(src.rstrip('/'))
-    
+def convert(src_path, dest_path, name, console):
     try:
-        chapter_number = extract_chapter_number(folder_name)
-    except ValueError as e:
-        print(f"Skipping folder {folder_name}: {e}")
+        folders = get_folders(src_path)
+        sorted_folders = sort_folders_chapters(folders)
+    except Exception as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
         return
 
+    for folder in sorted_folders:
+        folder_path = os.path.join(src_path, folder)
+
+        try:
+            convert_folder_to_pdf(folder_path, dest_path, name, console)
+        except Exception as e:
+            console.print(f"[bold red]Failed to process {folder}:[/bold red] {e}")
+            return
+
+def convert_folder_to_pdf(src, dest, name, console):
+    folder_name = os.path.basename(src.rstrip('/'))
+    
+    chapter_number = extract_chapter_number(folder_name)
+    
     pdf_name = create_chapter_name(name, chapter_number) + ".pdf"
     pdf_path = os.path.join(dest, pdf_name)
 
     try:
-        images = sorted(
-            [f for f in os.listdir(src) if f.endswith((".png", ".jpg", ".jpeg"))],
-            key=extract_page_number
-        )
-    except Exception as e:
-        raise ValueError(f"Failed to sort images in {src}.")
+        images = get_images(src)
+    except (FileNotFoundError, ValueError) as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        return
     
-    if not images:
-        raise ValueError(f"No images found in folder.")
+    sorted_images = sort_page_number(images)
 
     img_list = []
-    for image in images:
+    for image in sorted_images:
         img_path = os.path.join(src, image)
         try:
             img = Image.open(img_path)
@@ -78,7 +64,7 @@ def convert_folder_to_pdf(src, dest, name):
                 img = img.convert('RGB')
             img_list.append(img)
         except Exception as e:
-            raise RuntimeError(f"Could not process {image}. Error: {e}")
+            raise RuntimeError(f"Could not process {image}: {e}")
 
     if not img_list:
         raise ValueError(f"No valid images in folder: {src}")

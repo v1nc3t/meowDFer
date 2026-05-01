@@ -13,12 +13,12 @@ def extract_chapter_number(file_name):
     )
 
     if not match:
-        # raise ValueError(f"No chapter number found")
+        print(f"No chapter number found")
         return None
     
     number_str = match.group(1)
     if '.' in number_str:
-        print(f"Decimal chapter number are skipped: `{number_str}`")
+        print(f"Decimal chapter are skipped: {number_str}")
         return None
 
     return int(number_str)

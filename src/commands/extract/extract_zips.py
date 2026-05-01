@@ -24,7 +24,8 @@ def extract(src_path, dest_path, to_skip, console):
     try:
         zip_files = get_zip_files(src_path)
     except (FileNotFoundError, ValueError) as e:
-        console.print(f"bold red]Error:[/bold red] {e}")
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        return
 
     os.makedirs(dest_path, exist_ok=True)
     # extraction 

@@ -75,7 +75,7 @@ def main():
     elif args.convert:
         with console.status("[bold green]Processing...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(args.dest)
-            convert_pdf.run(args.src, args.dest, final_name)
+            convert_pdf.run(args.src, args.dest, final_name, console=console)
 
     elif args.merge:
         with console.status("[bold green]Processing...", spinner="dots"):
