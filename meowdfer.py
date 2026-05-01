@@ -85,7 +85,7 @@ def main():
     elif args.convert_merge:
         with console.status("[bold green]Processing...", spinner="dots"):
             inal_name = args.name if args.name else os.path.basename(args.dest)
-            convert_merge.run(args.src, args.dest, args.vols, final_name)
+            convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
 
     elif args.all:
         with console.status("[bold green]Processing...", spinner="dots"):
