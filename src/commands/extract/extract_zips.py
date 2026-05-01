@@ -2,6 +2,7 @@ import os
 import shutil
 import tempfile
 
+from ...utils.file_utils import get_files
 from zipfile import ZipFile, BadZipFile
 
 def run(src_path, dest_path, to_skip, console):
@@ -20,15 +21,11 @@ def run(src_path, dest_path, to_skip, console):
             shutil.move(s, d)
 
 def extract(src_path, dest_path, to_skip, console):
-    if not os.path.exists(src_path):
-        raise FileNotFoundError(f"Source directory not found: {src_path}")
+    try:
+        zip_files = get_files(src_path)
+    except (FileNotFoundError, ValueError) as e:
+        console.print(f"bold red]Error:[/bold red] {e}")
 
-    zip_files = [f for f in os.listdir(src_path) if f.endswith(".zip")]
-
-    if not zip_files:
-        console.print("[yellow]No zip files found.[/yellow]")
-        return
-    
     os.makedirs(dest_path, exist_ok=True)
     # extraction 
     for file_name in zip_files:
@@ -37,7 +34,6 @@ def extract(src_path, dest_path, to_skip, console):
             with ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(dest_path)
             console.print(f"[green]Prepared:[/green] {file_name}")
-        
         except Exception as e:
             if to_skip:
                 console.print(f"[bold yellow]Skipped: {file_name}.[/bold yellow]")
