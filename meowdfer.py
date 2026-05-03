@@ -7,17 +7,16 @@ import os
 import sys
 import argparse
 
+_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_ROOT, "src"))
+
 from rich.console import Console
-from rich.live import Live
-from rich.text import Text
 from rich.traceback import install
 from src.commands.extract import extract_zips
 from src.commands.convert import convert_pdf
 from src.commands.merge import merge_pdf
 from src.commands.convert_merge import convert_merge
 from src.commands.all import extract_convert_merge
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 install(show_locals=True)
 
@@ -39,7 +38,7 @@ def initiate():
     parser.add_argument("-s", "--src", required=True, help="source path (directory)")
     parser.add_argument("-d", "--dest", required=True, help="destination directory (if not exists will be created).")  
     parser.add_argument("-v", "--vols", help="path to vols.txt (Required for merge, all, convert-merge).")
-    parser.add_argument("-n", "--name", help="optinal name output (files named differently than dest name).")
+    parser.add_argument("-n", "--name", help="optional name output (files named differently than dest name).")
 
     args = parser.parse_args()
 
@@ -68,34 +67,49 @@ def main():
     console = Console()
     console.print(banner)
 
+    def _finish(ok: bool, ok_msg: str, fail_msg: str) -> None:
+        if ok:
+            console.print(f"[bold green]{ok_msg}[/bold green]")
+        else:
+            console.print(f"[bold red]{fail_msg}[/bold red]")
+            sys.exit(1)
+
     if args.extract:
         with console.status("[bold green]Extracting...", spinner="dots"):
-            extract_zips.run(args.src, args.dest, to_skip=True, console=console)
-            console.print("[bold green]Extract completed![/bold green]")
-    
+            ok = extract_zips.run(args.src, args.dest, to_skip=True, console=console)
+        _finish(ok, "Extract completed!", "Extract failed; destination was not updated.")
+
     elif args.convert:
         with console.status("[bold green]Converting...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest)
-            convert_pdf.run(args.src, args.dest, final_name, console=console)
-            console.print("[bold green]Convert completed![/bold green]")
+            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
+            ok = convert_pdf.run(args.src, args.dest, final_name, console=console)
+        _finish(ok, "Convert completed!", "Convert failed; destination was not updated.")
 
     elif args.merge:
         with console.status("[bold green]Merging...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest)
-            merge_pdf.run(args.src, args.dest, args.vols, final_name, console=console)
-            console.print("[bold green]Merge completed![/bold green]")
-    
+            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
+            ok = merge_pdf.run(args.src, args.dest, args.vols, final_name, console=console)
+        _finish(ok, "Merge completed!", "Merge failed; destination was not updated.")
+
     elif args.convert_merge:
         with console.status("[bold green]Pipeline...", spinner="dots"):
-            inal_name = args.name if args.name else os.path.basename(args.dest)
-            convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
-            console.print("[bold green]CM pipeline (Convert -> Merge) completed![/bold green]")
+            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
+            ok = convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
+        _finish(
+            ok,
+            "CM pipeline (Convert -> Merge) completed!",
+            "Convert-merge pipeline failed; destination was not updated.",
+        )
 
     elif args.all:
         with console.status("[bold green]Pipeline...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest)
-            extract_convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
-            console.print("[bold green]All pipeline (Extract -> Convert -> Merge) completed![/bold green]")
+            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
+            ok = extract_convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
+        _finish(
+            ok,
+            "All pipeline (Extract -> Convert -> Merge) completed!",
+            "Full pipeline failed; destination was not updated.",
+        )
 
 
 if __name__ == "__main__":
