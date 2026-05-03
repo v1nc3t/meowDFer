@@ -3,18 +3,17 @@ import shutil
 import tempfile
 
 from pypdf import PdfWriter
-from rich.console import Console
 from ...utils import naming_utils
 from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
+
 
 def run(src_path, dest_path, vols_path, name, console):
     console.print("[bold green]Merge started[/bold green]")
     with tempfile.TemporaryDirectory() as temp_dir:
-        merge(src_path, temp_dir, vols_path, name, console)
+        if not merge(src_path, temp_dir, vols_path, name, console):
+            return False
 
-        # move from temp to dest
         os.makedirs(dest_path, exist_ok=True)
-
         for item in os.listdir(temp_dir):
             s = os.path.join(temp_dir, item)
             d = os.path.join(dest_path, item)
@@ -23,28 +22,29 @@ def run(src_path, dest_path, vols_path, name, console):
                 shutil.rmtree(d)
             shutil.move(s, d)
 
+    return True
+
+
 def merge(src, dest, vols, name, console):
-    
     try:
         pdfs = get_pdfs(src)
     except (FileNotFoundError, ValueError) as e:
         console.print(f"[bold red]Error:[/bold red] {e}")
-        return
-    
+        return False
+
     sorted_pdfs = sort_chapters(pdfs)
-    
+
     try:
         intervals = get_volumes_file(vols)
     except (FileNotFoundError, ValueError) as e:
         console.print(f"[bold red]Error:[/bold red] {e}")
-        return
+        return False
 
-    # mapping chapters
     try:
         chapter_map = get_chapter_map(sorted_pdfs)
     except ValueError as e:
         console.print(f"[bold red]Error:[/bold red] {e}")
-        return
+        return False
 
     vol_num = 1
     prev = 0
@@ -72,4 +72,6 @@ def merge(src, dest, vols, name, console):
             prev = val
         except ValueError as e:
             console.print(f"[bold red]Error in Volume {vol_num}:[/bold red] {e}")
-            return
+            return False
+
+    return True
