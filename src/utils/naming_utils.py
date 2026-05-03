@@ -25,9 +25,6 @@ def extract_chapter_number(file_name, allow_decimal=True):
     return int(num) if num.is_integer() else num
 
 def extract_page_number(file_name):
-
-    page_pattern = r'(\d+)'
-
     match = re.search(
         r'\d+(?:\.\d+)?',
         file_name
