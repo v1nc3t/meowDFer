@@ -28,17 +28,15 @@ def initiate():
 
     # action flags (required: must pick one)
     action_group = parser.add_mutually_exclusive_group(required=True)
-    action_group.add_argument("-e", "--extract", action="store_true", help="extract zip files.")
-    action_group.add_argument("-c", "--convert", action="store_true", help="convert image folders to PDFs.")
-    action_group.add_argument("-m", "--merge", action="store_true", help="merge PDFs based on vols.txt.")
-    action_group.add_argument("-a", "--all", action="store_true", help="full pipeline: extract -> convert -> merge.")
-    action_group.add_argument("-cm", "--convert-merge", action="store_true", help="half pipeline: convert -> merge.")
+    action_group.add_argument("-e", "--extract", nargs=2, metavar=("SRC", "DEST"), help="extract zip files.")
+    action_group.add_argument("-c", "--convert", nargs=2, metavar=("SRC", "DEST"), help="convert image folders to PDFs.")
+    action_group.add_argument("-m", "--merge", nargs=2, metavar=("SRC", "DEST"), help="merge PDFs based on vols.txt.")
+    action_group.add_argument("-a", "--all", nargs=2, metavar=("SRC", "DEST"), help="full pipeline: extract -> convert -> merge.")
+    action_group.add_argument("-cm", "--convert-merge", nargs=2, metavar=("SRC", "DEST"), help="half pipeline: convert -> merge.")
 
-    # data flags 
-    parser.add_argument("-s", "--src", required=True, help="source path (directory)")
-    parser.add_argument("-d", "--dest", required=True, help="destination directory (if not exists will be created).")  
-    parser.add_argument("-v", "--vols", help="path to vols.txt (Required for merge, all, convert-merge).")
-    parser.add_argument("-n", "--name", help="optional name output (files named differently than dest name).")
+    # data flags  
+    parser.add_argument("-v", "--vols", metavar="VOLS", help="path to vols.txt (Required for merge, all, convert-merge).")
+    parser.add_argument("-n", "--name", metavar="NAME", help="optional name output (files named differently than dest name).")
 
     args = parser.parse_args()
 
@@ -75,26 +73,30 @@ def main():
             sys.exit(1)
 
     if args.extract:
+        src, dest = args.extract
         with console.status("[bold green]Extracting...", spinner="dots"):
-            ok = extract_zips.run(args.src, args.dest, to_skip=True, console=console)
+            ok = extract_zips.run(src, dest, to_skip=True, console=console)
         _finish(ok, "Extract completed!", "Extract failed; destination was not updated.")
 
     elif args.convert:
+        src, dest = args.convert
         with console.status("[bold green]Converting...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
-            ok = convert_pdf.run(args.src, args.dest, final_name, console=console)
+            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
+            ok = convert_pdf.run(src, dest, final_name, console=console)
         _finish(ok, "Convert completed!", "Convert failed; destination was not updated.")
 
     elif args.merge:
+        src, dest = args.merge
         with console.status("[bold green]Merging...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
-            ok = merge_pdf.run(args.src, args.dest, args.vols, final_name, console=console)
+            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
+            ok = merge_pdf.run(src, dest, args.vols, final_name, console=console)
         _finish(ok, "Merge completed!", "Merge failed; destination was not updated.")
 
     elif args.convert_merge:
+        src, dest = args.convert_merge
         with console.status("[bold green]Pipeline...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
-            ok = convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
+            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
+            ok = convert_merge.run(src, dest, args.vols, final_name, console=console)
         _finish(
             ok,
             "CM pipeline (Convert -> Merge) completed!",
@@ -102,9 +104,10 @@ def main():
         )
 
     elif args.all:
+        src, dest = args.all
         with console.status("[bold green]Pipeline...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(args.dest.rstrip(os.sep))
-            ok = extract_convert_merge.run(args.src, args.dest, args.vols, final_name, console=console)
+            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
+            ok = extract_convert_merge.run(src, dest, args.vols, final_name, console=console)
         _finish(
             ok,
             "All pipeline (Extract -> Convert -> Merge) completed!",
