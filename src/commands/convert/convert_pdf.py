@@ -7,9 +7,9 @@ from ...utils.naming_utils import extract_chapter_number, create_chapter_name
 from ...utils.file_utils import get_folders, sort_chapters, get_images, sort_page_number
 
 
-def run(src_path, dest_path, name, console):
+def run(src_path, dest_path, name, to_skip, console):
     with tempfile.TemporaryDirectory() as temp_dir:
-        if not convert(src_path, temp_dir, name, console):
+        if not convert(src_path, temp_dir, name, to_skip, console):
             return False
 
         os.makedirs(dest_path, exist_ok=True)
@@ -24,7 +24,7 @@ def run(src_path, dest_path, name, console):
     return True
 
 
-def convert(src_path, dest_path, name, console):
+def convert(src_path, dest_path, name, to_skip,console):
     try:
         folders = get_folders(src_path)
         sorted_folders = sort_chapters(folders)
@@ -38,21 +38,22 @@ def convert(src_path, dest_path, name, console):
 
         try:
             chapter_number = extract_chapter_number(folder_name, False)
-        except ValueError as e:
-            console.print(f"[bold yellow]Skipped:[/bold yellow] {e}")
-            continue
 
-        try:
-            pdf_name = convert_folder_to_pdf(folder_path, dest_path, chapter_number, name, console)
+            pdf_name = convert_folder_to_pdf(folder_path, dest_path, chapter_number, name)
             console.print(f"[blue]Staged:[/blue] {pdf_name}")
+        
         except Exception as e:
+            if to_skip:
+                console.print(f"[bold yellow]Skipped: {folder_name} due to erorr: {e}[/bold yellow]")
+                continue
+
             console.print(f"[bold red]Failed to process {folder}:[/bold red] {e}")
             return False
 
     return True
 
 
-def convert_folder_to_pdf(src, dest, chapter_number, name, console):
+def convert_folder_to_pdf(src, dest, chapter_number, name):
     pdf_name = create_chapter_name(name, chapter_number) + ".pdf"
     pdf_path = os.path.join(dest, pdf_name)
 

@@ -78,21 +78,22 @@ def main():
         to_skip = args.skip
         with console.status("[bold green]Extracting...", spinner="dots"):
             ok = extract_zips.run(src, dest, to_skip=to_skip, console=console)
-        _finish(ok, "Extract completed!", "Extract failed; destination was not updated.")
+        _finish(ok, "Extract completed!", "Extract failed: destination was not updated.")
 
     elif args.convert:
         src, dest = args.convert
+        to_skip = args.skip
         with console.status("[bold green]Converting...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = convert_pdf.run(src, dest, final_name, console=console)
-        _finish(ok, "Convert completed!", "Convert failed; destination was not updated.")
+            ok = convert_pdf.run(src, dest, final_name, to_skip=to_skip ,console=console)
+        _finish(ok, "Convert completed!", "Convert failed: destination was not updated.")
 
     elif args.merge:
         src, dest = args.merge
         with console.status("[bold green]Merging...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
             ok = merge_pdf.run(src, dest, args.vols, final_name, console=console)
-        _finish(ok, "Merge completed!", "Merge failed; destination was not updated.")
+        _finish(ok, "Merge completed!", "Merge failed: destination was not updated.")
 
     elif args.convert_merge:
         src, dest = args.convert_merge
@@ -102,7 +103,7 @@ def main():
         _finish(
             ok,
             "CM pipeline (Convert -> Merge) completed!",
-            "Convert-merge pipeline failed; destination was not updated.",
+            "CM pipeline (Convert -> Merge) failed: destination was not updated.",
         )
 
     elif args.all:
@@ -113,7 +114,7 @@ def main():
         _finish(
             ok,
             "All pipeline (Extract -> Convert -> Merge) completed!",
-            "Full pipeline failed; destination was not updated.",
+            "All pipeline (Extract -> Convert -> Merge) failed: destination was not updated.",
         )
 
 
