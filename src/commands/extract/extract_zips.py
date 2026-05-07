@@ -25,7 +25,7 @@ def extract(src_path, dest_path, to_skip, console):
     try:
         zip_files = get_zip_files(src_path)
     except (FileNotFoundError, ValueError) as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
+        console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False
 
     os.makedirs(dest_path, exist_ok=True)
@@ -40,7 +40,7 @@ def extract(src_path, dest_path, to_skip, console):
                 console.print(f"[bold yellow]Skipped: {file_name} due to error: {e}[/bold yellow]")
                 continue
 
-            console.print(f"[bold red]Error {file_name}: {e}[/bold red]")
+            console.print(f"[bold red]Failed to process {file_name}:[/bold red] {e}")
             return False
 
     return True

@@ -32,7 +32,7 @@ def merge(src, dest, vols, name, to_skip, console):
         intervals = get_volumes_file(vols)
         chapter_map = get_chapter_map(sorted_pdfs)
     except (FileNotFoundError, ValueError) as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
+        console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False
 
     vol_num = 1

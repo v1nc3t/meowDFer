@@ -24,12 +24,12 @@ def run(src_path, dest_path, name, to_skip, console):
     return True
 
 
-def convert(src_path, dest_path, name, to_skip,console):
+def convert(src_path, dest_path, name, to_skip, console):
     try:
         folders = get_folders(src_path)
         sorted_folders = sort_chapters(folders)
     except Exception as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
+        console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False
 
     for folder in sorted_folders:
@@ -47,7 +47,7 @@ def convert(src_path, dest_path, name, to_skip,console):
                 console.print(f"[bold yellow]Skipped: {folder_name} due to erorr: {e}[/bold yellow]")
                 continue
 
-            console.print(f"[bold red]Failed to process {folder}:[/bold red] {e}")
+            console.print(f"[bold red]Failed to process {folder_name}:[/bold red] {e}")
             return False
 
     return True
