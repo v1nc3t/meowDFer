@@ -11,6 +11,7 @@ Compile image collections into PDF chapters and volumes.
   - convert -> merge
   - extract -> convert -> merge
 - Transactional output behavior: results are staged first and moved to the destination only on success.
+- If an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
 
 ## Installation
 
@@ -42,7 +43,7 @@ python3 meowdfer.py -h
 
 CLI syntax:
 ```sh
-python3 meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -a SRC DEST | -cm SRC DEST) [-v VOLS] [-n NAME]
+python3 meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST) [-v VOLS] [-n NAME] [-s]
 ```
 
 Notes:
@@ -106,6 +107,7 @@ python3 meowdfer.py --all <zips_folder> <out_folder> --vols ./vols.txt --name ex
 |---|---|
 | `-v`, `--vols VOLS` | File with increasing chapter cutoffs (required for merge pipelines). |
 | `-n`, `--name NAME` | Override base output name (otherwise uses destination folder name). |
+| `-s`, `--skip` | On error during processing, log continue to the next item instead of aborting. | 
 
 ## Running Tests
 

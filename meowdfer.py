@@ -37,7 +37,7 @@ def initiate():
     # data flags  
     parser.add_argument("-v", "--vols", metavar="VOLS", help="path to vols.txt (Required for merge, all, convert-merge).")
     parser.add_argument("-n", "--name", metavar="NAME", help="optional name output (files named differently than dest name).")
-    parser.add_argument("-s", "--skip", action="store_true", help="skip execution of error files.")
+    parser.add_argument("-s", "--skip", action="store_true", help="on error during processing, log continue to the next item instead of aborting.")
 
     args = parser.parse_args()
 
