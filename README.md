@@ -34,6 +34,18 @@ source .venv/bin/activate
 pip install -e .
 ```
 
+Alternatively:
+
+2. Make script executable:
+```sh
+chmod +x meowdfer.py
+```
+
+3. Run it as executable:
+```sh
+./meowdfer.py -h
+```
+
 ## Usage
 
 Show help:
