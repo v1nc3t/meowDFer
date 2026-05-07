@@ -7,10 +7,10 @@ from ...utils import naming_utils
 from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
 
 
-def run(src_path, dest_path, vols_path, name, console):
+def run(src_path, dest_path, vols_path, name, to_skip, console):
     console.print("[bold green]Merge started[/bold green]")
     with tempfile.TemporaryDirectory() as temp_dir:
-        if not merge(src_path, temp_dir, vols_path, name, console):
+        if not merge(src_path, temp_dir, vols_path, name, to_skip, console):
             return False
 
         os.makedirs(dest_path, exist_ok=True)
@@ -25,24 +25,13 @@ def run(src_path, dest_path, vols_path, name, console):
     return True
 
 
-def merge(src, dest, vols, name, console):
+def merge(src, dest, vols, name, to_skip, console):
     try:
         pdfs = get_pdfs(src)
-    except (FileNotFoundError, ValueError) as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
-        return False
-
-    sorted_pdfs = sort_chapters(pdfs)
-
-    try:
+        sorted_pdfs = sort_chapters(pdfs)
         intervals = get_volumes_file(vols)
-    except (FileNotFoundError, ValueError) as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
-        return False
-
-    try:
         chapter_map = get_chapter_map(sorted_pdfs)
-    except ValueError as e:
+    except (FileNotFoundError, ValueError) as e:
         console.print(f"[bold red]Error:[/bold red] {e}")
         return False
 
@@ -50,17 +39,22 @@ def merge(src, dest, vols, name, console):
     prev = 0
     for val in intervals:
         start_ch, end_ch = prev + 1, val
-        try:
-            if start_ch > end_ch:
-                raise ValueError(f"Invalid volume range: {start_ch} -> {end_ch}.")
+        vol_name = naming_utils.create_volume_name(name, vol_num) + ".pdf"
+        
+        if start_ch > end_ch:
+            console.print(f"[bold red]Alignment Error:[/bold red] Volume {vol_num} range invalid ({start_ch}-{end_ch})")
+            return False
+        
+        for ch in range(start_ch, end_ch + 1):
+            if ch not in chapter_map:
+                console.print(f"[bold red]Data Error:[/bold red] Chapter {ch} missing for Volume {vol_num}")
+                return False
 
+        try:
             merger = PdfWriter()
-            vol_name = naming_utils.create_volume_name(name, vol_num) + ".pdf"
             temp_vol_path = os.path.join(dest, vol_name)
 
             for ch in range(start_ch, end_ch + 1):
-                if ch not in chapter_map:
-                    raise ValueError(f"Missing chapter {ch} for Volume {vol_num}.")
                 merger.append(os.path.join(src, chapter_map[ch]))
 
             with open(temp_vol_path, "wb") as f_out:
@@ -68,10 +62,19 @@ def merge(src, dest, vols, name, console):
             merger.close()
 
             console.print(f"[blue]Staged:[/blue] {vol_name} (Chapters {start_ch}-{end_ch})")
-            vol_num += 1
-            prev = val
-        except ValueError as e:
-            console.print(f"[bold red]Error in Volume {vol_num}:[/bold red] {e}")
+
+        except Exception as e:
+            if to_skip:
+                console.print(f"[bold yellow]Skipping: {vol_name} due to error: {e}[/bold yellow]")
+                
+                vol_num += 1
+                prev = val
+                continue
+
+            console.print(f"[bold red]Failed to process {vol_name}:[/bold red] {e}")
             return False
+
+        vol_num += 1
+        prev = val
 
     return True

@@ -90,9 +90,10 @@ def main():
 
     elif args.merge:
         src, dest = args.merge
+        to_skip = args.skip
         with console.status("[bold green]Merging...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = merge_pdf.run(src, dest, args.vols, final_name, console=console)
+            ok = merge_pdf.run(src, dest, args.vols, final_name, to_skip=to_skip,console=console)
         _finish(ok, "Merge completed!", "Merge failed: destination was not updated.")
 
     elif args.convert_merge:
