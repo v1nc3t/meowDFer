@@ -8,7 +8,6 @@ from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_c
 
 
 def run(src_path, dest_path, vols_path, name, to_skip, console):
-    console.print("[bold green]Merge started[/bold green]")
     with tempfile.TemporaryDirectory() as temp_dir:
         if not merge(src_path, temp_dir, vols_path, name, to_skip, console):
             return False

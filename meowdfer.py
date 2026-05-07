@@ -76,32 +76,48 @@ def main():
     if args.extract:
         src, dest = args.extract
         to_skip = args.skip
+
+        console.print("[bold green]Extract: started[/bold green]")
+
         with console.status("[bold green]Extracting...", spinner="dots"):
             ok = extract_zips.run(src, dest, to_skip=to_skip, console=console)
+        
         _finish(ok, "Extract completed!", "Extract failed: destination was not updated.")
 
     elif args.convert:
         src, dest = args.convert
         to_skip = args.skip
+
+        console.print("[bold green]Convert: started[/bold green]")
+
         with console.status("[bold green]Converting...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
             ok = convert_pdf.run(src, dest, final_name, to_skip=to_skip ,console=console)
+        
         _finish(ok, "Convert completed!", "Convert failed: destination was not updated.")
 
     elif args.merge:
         src, dest = args.merge
         to_skip = args.skip
+
+        console.print("[bold green]Merge: started[/bold green]")
+
         with console.status("[bold green]Merging...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
             ok = merge_pdf.run(src, dest, args.vols, final_name, to_skip=to_skip,console=console)
+        
         _finish(ok, "Merge completed!", "Merge failed: destination was not updated.")
 
     elif args.convert_merge:
         src, dest = args.convert_merge
         to_skip = args.skip
+
+        console.print("[bold green]CM pipeline (Convert -> Merge): started[/bold green]")
+
         with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
             ok = convert_merge.run(src, dest, args.vols, final_name, to_skip=to_skip, console=console)
+            
         _finish(
             ok,
             "CM pipeline (Convert -> Merge): completed!",
@@ -111,9 +127,13 @@ def main():
     elif args.all:
         src, dest = args.all
         to_skip = args.skip
+
+        console.print("[bold green]All pipeline (Extract -> Convert -> Merge): started[/bold green]")
+
         with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
             ok = extract_convert_merge.run(src, dest, args.vols, final_name, to_skip=to_skip, console=console)
+
         _finish(
             ok,
             "All pipeline (Extract -> Convert -> Merge): completed!",
