@@ -37,6 +37,7 @@ def initiate():
     # data flags  
     parser.add_argument("-v", "--vols", metavar="VOLS", help="path to vols.txt (Required for merge, all, convert-merge).")
     parser.add_argument("-n", "--name", metavar="NAME", help="optional name output (files named differently than dest name).")
+    parser.add_argument("-s", "--skip", action="store_true", help="skip execution of error files.")
 
     args = parser.parse_args()
 
@@ -74,8 +75,9 @@ def main():
 
     if args.extract:
         src, dest = args.extract
+        to_skip = args.skip
         with console.status("[bold green]Extracting...", spinner="dots"):
-            ok = extract_zips.run(src, dest, to_skip=True, console=console)
+            ok = extract_zips.run(src, dest, to_skip=to_skip, console=console)
         _finish(ok, "Extract completed!", "Extract failed; destination was not updated.")
 
     elif args.convert:
