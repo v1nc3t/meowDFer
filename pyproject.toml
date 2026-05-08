@@ -2,6 +2,7 @@
 name = "meowDFer"
 version = "0.1.0"
 description = "A CLI tool to convert zipped image folders into structured PDFs"
+readme = "README.md"
 requires-python = ">=3.10"
 authors = [
     {name = "v1c3nt"}
@@ -9,17 +10,20 @@ authors = [
 license = {text = "GPL-3.0-only"}
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
 ]
 
 dependencies = [
     "Pillow", 
     "pypdf",
-    "rich>=13.0.0"
+    "rich>=13.0.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest"
+    "pytest>=7.0.0"
 ]
 
 [project.scripts]
