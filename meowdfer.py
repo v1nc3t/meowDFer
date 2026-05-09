@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +19,7 @@ from src.commands.convert import convert_pdf
 from src.commands.merge import merge_pdf
 from src.commands.convert_merge import convert_merge
 from src.commands.all import extract_convert_merge
+from src.commands.scrape import scrape_volumes
 
 install(show_locals=True)
 
@@ -30,19 +33,24 @@ def initiate():
     action_group = parser.add_mutually_exclusive_group(required=True)
     action_group.add_argument("-e", "--extract", nargs=2, metavar=("SRC", "DEST"), help="extract zip files.")
     action_group.add_argument("-c", "--convert", nargs=2, metavar=("SRC", "DEST"), help="convert image folders to PDFs.")
-    action_group.add_argument("-m", "--merge", nargs=2, metavar=("SRC", "DEST"), help="merge PDFs based on vols.txt.")
+    action_group.add_argument("-m", "--merge", nargs=2, metavar=("SRC", "DEST"), help="merge PDFs based on a file with volume intervals (requires -f/--file).")
     action_group.add_argument("-a", "--all", nargs=2, metavar=("SRC", "DEST"), help="full pipeline: extract -> convert -> merge.")
     action_group.add_argument("-cm", "--convert-merge", nargs=2, metavar=("SRC", "DEST"), help="half pipeline: convert -> merge.")
+    action_group.add_argument("-sc", "--scrape", nargs=2, metavar=("NAME", "DEST"), help="scrape wikipedia for finding the chapters intervals of a manga.")
 
     # data flags  
-    parser.add_argument("-v", "--vols", metavar="VOLS", help="path to vols.txt (Required for merge, all, convert-merge).")
+    parser.add_argument("-f", "--file", metavar="FILE", help="name of file with intervals for volumes (Required for merge, all, convert-merge).")
     parser.add_argument("-n", "--name", metavar="NAME", help="optional name output (files named differently than dest name).")
     parser.add_argument("-s", "--skip", action="store_true", help="on error during processing, log continue to the next item instead of aborting.")
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose/detailed output.")
 
     args = parser.parse_args()
 
-    if (args.merge or args.all or args.convert_merge) and not args.vols:
-        parser.error("the --vols/-v argument is required when running merge, all, or convert-merge.")
+    if (args.merge or args.all or args.convert_merge) and not args.file:
+        parser.error("the --file/-f argument is required when running merge, all, or convert-merge.")
+
+    if args.file and not os.path.isfile(args.file):
+        parser.error(f"The file '{args.file}' does not exist.")
 
     return args
 
@@ -138,6 +146,22 @@ def main():
             ok,
             "All pipeline (Extract -> Convert -> Merge): completed!",
             "All pipeline (Extract -> Convert -> Merge) failed: destination was not updated.",
+        )
+    
+    elif args.scrape: 
+        name, dest = args.scrape
+
+        console.print(f"[bold green]Scraping: started[/bold green]")
+
+        if args.verbose:
+            ok = scrape_volumes.run(name, dest, verbose=True, console=console)
+        else:
+            ok = scrape_volumes.run(name, dest, verbose=False, console=console)
+        
+        _finish(
+            ok,
+            "Scraping: completed!",
+            "Scraping failed: destination was not updated.",
         )
 
 
