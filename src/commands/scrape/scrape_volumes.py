@@ -257,26 +257,39 @@ def expand_chapter(raw: str) -> list[str]:
     return [f'{base} ({i})' for i in range(a, b + 1)]
 
 
-def write_output(manga: str, source_url: str, volumes: list[dict], path: str):
+def write_output(manga: str, source_url: str, volumes: list[dict], path: str, verbose: bool = False):
     with open(path, "w", encoding="utf-8") as f:
-        f.write(f"Title: {manga}\n")
-        f.write(f"Source: {source_url}\n\n")
+        if verbose:
+            f.write(f"Title: {manga}\n")
+            f.write(f"Source: {source_url}\n\n")
+        
         global_n = 0
+        endpoints = []
+
         for v in volumes:
             count = sum(len(expand_chapter(ch)) for ch in v["chapters"])
+        
             if count == 0:
-                f.write(f"v{v['volume']}: -\n")
+                if verbose:
+                    f.write(f"volume {v['volume']}: -\n")
                 continue
+            
             start = global_n + 1
             end = global_n + count
             global_n = end
-            if start == end:
-                f.write(f"v{v['volume']}: {start}\n")
+            if verbose:
+                if start == end:
+                    f.write(f"volume {v['volume']}: {start}\n")
+                else:
+                    f.write(f"volume {v['volume']}: {start}-{end}\n")
             else:
-                f.write(f"v{v['volume']}: {start}-{end}\n")
+                endpoints.append(str(end))
+        
+        if not verbose:
+            f.write(", ".join(endpoints))
 
 
-def run(name, dest_path, console):
+def run(name, dest_path, verbose=False, console=None):
     # validate if manga has wikipedia page 
     console.print(f"Validating '{name}' as a manga on Wikipedia...")
     title = validate_manga(name)
@@ -312,6 +325,6 @@ def run(name, dest_path, console):
         return False
     
     out = dest_path or f"{re.sub(r'[^A-Za-z0-9]+', '_', name).strip('_')}_chapters.txt"
-    write_output(title, url, volumes, out)
+    write_output(title, url, volumes, out, verbose)
     console.print(f"Wrote: {out}")
     return True
