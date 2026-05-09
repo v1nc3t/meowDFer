@@ -12,7 +12,7 @@ Compile image collections into PDF chapters and volumes.
   - extract -> convert -> merge
 - Transactional output behavior: results are staged first and moved to the destination only on success.
 - Skip flag: if an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
-- Verbose flag: enables detailed output after scraping.
+- Verbose flag: enables detailed output after scraping. (source)
 
 ## Installation
 
@@ -64,8 +64,8 @@ Notes:
 - `DEST` is created if it does not exist.
 - `--name` is optional and controls output PDF names.
 - `--file` is required for `--merge`, `--convert-merge`, and `--all`.
-- `--skip` continues to the next item instead of aborting on error.
-- `--verbose` enables detailed output after scraping.
+- `--skip` continues to the next item instead of aborting on error. (extract, convert, merge, pipelines)
+- `--verbose` enables detailed output after scraping. (scrape)
 
 ### Extract
 
@@ -106,6 +106,13 @@ python3 meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt
 Extract -> Convert -> Merge:
 ```sh
 python3 meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
+```
+
+### Scrape 
+scrapes wikipedia for finding the chapters intervals of a manga.
+
+```sh
+python3 meowdfer.py --scrape <name> <out_file>
 ```
 
 ## CLI Options
