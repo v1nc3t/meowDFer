@@ -19,6 +19,7 @@ from src.commands.convert import convert_pdf
 from src.commands.merge import merge_pdf
 from src.commands.convert_merge import convert_merge
 from src.commands.all import extract_convert_merge
+from src.commands.scrape import scrape_volumes
 
 install(show_locals=True)
 
@@ -35,6 +36,7 @@ def initiate():
     action_group.add_argument("-m", "--merge", nargs=2, metavar=("SRC", "DEST"), help="merge PDFs based on vols.txt.")
     action_group.add_argument("-a", "--all", nargs=2, metavar=("SRC", "DEST"), help="full pipeline: extract -> convert -> merge.")
     action_group.add_argument("-cm", "--convert-merge", nargs=2, metavar=("SRC", "DEST"), help="half pipeline: convert -> merge.")
+    action_group.add_argument("-sc", "--scrape", nargs=2, metavar=("NAME", "DEST"), help="scrape wikipedia for finding the chapters intervals of a manga.")
 
     # data flags  
     parser.add_argument("-v", "--vols", metavar="VOLS", help="path to vols.txt (Required for merge, all, convert-merge).")
@@ -140,6 +142,20 @@ def main():
             ok,
             "All pipeline (Extract -> Convert -> Merge): completed!",
             "All pipeline (Extract -> Convert -> Merge) failed: destination was not updated.",
+        )
+    
+    elif args.scrape: 
+        name, dest = args.scrape
+
+        console.print(f"[bold green]Scraping: started[/bold green]")
+
+        with console.status(f"[bold green]Scraping... {name}[/bold green]"):
+            ok = scrape_volumes.run(name, dest, console=console)
+
+        _finish(
+            ok,
+            "Scraping: completed!",
+            "Scraping failed: destination was not updated.",
         )
 
 
