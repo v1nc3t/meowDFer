@@ -289,7 +289,7 @@ def write_output(manga: str, source_url: str, volumes: list[dict], path: str, ve
             f.write(", ".join(endpoints))
 
 
-def run(name, dest_path, verbose=False, console=None):
+def run(name: str, dest_path: str, verbose: bool = False, console=None) -> bool:
     # validate if manga has wikipedia page 
     console.print(f"Validating '{name}' as a manga on Wikipedia...")
     title = validate_manga(name)

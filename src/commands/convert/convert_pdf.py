@@ -1,13 +1,14 @@
 import os
 import shutil
 import tempfile
+from typing import Any
 
 from PIL import Image
 from ...utils.naming_utils import extract_chapter_number, create_chapter_name
 from ...utils.file_utils import get_folders, sort_chapters, get_images, sort_page_number
 
 
-def run(src_path, dest_path, name, to_skip, console):
+def run(src_path: str, dest_path: str, name: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
         if not convert(src_path, temp_dir, name, to_skip, console):
             return False
@@ -24,7 +25,7 @@ def run(src_path, dest_path, name, to_skip, console):
     return True
 
 
-def convert(src_path, dest_path, name, to_skip, console):
+def convert(src_path: str, dest_path: str, name: str, to_skip: bool, console: Any) -> bool:
     try:
         folders = get_folders(src_path)
         sorted_folders = sort_chapters(folders)
@@ -53,7 +54,7 @@ def convert(src_path, dest_path, name, to_skip, console):
     return True
 
 
-def convert_folder_to_pdf(src, dest, chapter_number, name):
+def convert_folder_to_pdf(src: str, dest: str, chapter_number: int, name: str) -> str:
     pdf_name = create_chapter_name(name, chapter_number) + ".pdf"
     pdf_path = os.path.join(dest, pdf_name)
 

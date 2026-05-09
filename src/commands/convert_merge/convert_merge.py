@@ -1,10 +1,11 @@
 import os
 import tempfile
+from typing import Any
 
 from ..convert import convert_pdf
 from ..merge import merge_pdf
 
-def run(src, dest, vols, name, to_skip, console):
+def run(src: str, dest: str, vols: str, name: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_converted:
         if not convert_pdf.run(src, temp_converted, name, to_skip, console):
             return False

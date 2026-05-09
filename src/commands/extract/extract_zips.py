@@ -1,11 +1,12 @@
 import os
 import shutil
 import tempfile
+from typing import Any
 
 from ...utils.file_utils import get_zip_files
 from zipfile import ZipFile
 
-def run(src_path, dest_path, to_skip, console):
+def run(src_path: str, dest_path: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
         if not extract(src_path, temp_dir, to_skip, console):
             return False
@@ -21,7 +22,7 @@ def run(src_path, dest_path, to_skip, console):
 
     return True
 
-def extract(src_path, dest_path, to_skip, console):
+def extract(src_path: str, dest_path: str, to_skip: bool, console: Any) -> bool:
     try:
         zip_files = get_zip_files(src_path)
     except (FileNotFoundError, ValueError) as e:
