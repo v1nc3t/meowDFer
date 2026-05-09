@@ -1,12 +1,12 @@
 import re
 
-def create_chapter_name(name, chapter_number):
+def create_chapter_name(name: str, chapter_number: int) -> str:
     return f"{name} Chapter {chapter_number}"
 
-def create_volume_name(name, volume_number):
+def create_volume_name(name: str, volume_number: int) -> str:
     return f"{name} Volume {volume_number}"
 
-def extract_chapter_number(file_name, allow_decimal=True):
+def extract_chapter_number(file_name: str, allow_decimal: bool = True) -> float:
     match = re.search(
         r'(?i)\b(?:chapter|ch\.?|c)\s*(\d+(?:\.\d+)?)\b',
         file_name
@@ -24,7 +24,7 @@ def extract_chapter_number(file_name, allow_decimal=True):
 
     return int(num) if num.is_integer() else num
 
-def extract_page_number(file_name):
+def extract_page_number(file_name: str) -> int:
     match = re.search(
         r'\d+(?:\.\d+)?',
         file_name
