@@ -11,7 +11,8 @@ Compile image collections into PDF chapters and volumes.
   - convert -> merge
   - extract -> convert -> merge
 - Transactional output behavior: results are staged first and moved to the destination only on success.
-- If an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
+- Skip flag: if an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
+- Verbose flag: enables detailed output after scraping.
 
 ## Installation
 
@@ -55,14 +56,16 @@ python3 meowdfer.py -h
 
 CLI syntax:
 ```sh
-python3 meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST) [-v VOLS] [-n NAME] [-s]
+python3 meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc NAME DEST) [-f FILE] [-n NAME] [-s] [-v]
 ```
 
 Notes:
 
 - `DEST` is created if it does not exist.
 - `--name` is optional and controls output PDF names.
-- `--vols` is required for `--merge`, `--convert-merge`, and `--all`.
+- `--file` is required for `--merge`, `--convert-merge`, and `--all`.
+- `--skip` continues to the next item instead of aborting on error.
+- `--verbose` enables detailed output after scraping.
 
 ### Extract
 
@@ -90,19 +93,19 @@ python3 meowdfer.py --convert <img_folders> <out_folder> --name example
 ```
 
 ```sh
-python3 meowdfer.py --merge <pdf_folder> <out_folder> --vols ./vols.txt --name example
+python3 meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name example
 ```
 
 ### Pipelines
 
 Convert -> Merge:
 ```sh
-python3 meowdfer.py --convert-merge <img_folders> <out_folder> --vols ./vols.txt --name example
+python3 meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example
 ```
 
 Extract -> Convert -> Merge:
 ```sh
-python3 meowdfer.py --all <zips_folder> <out_folder> --vols ./vols.txt --name example
+python3 meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
 ```
 
 ## CLI Options
@@ -111,15 +114,17 @@ python3 meowdfer.py --all <zips_folder> <out_folder> --vols ./vols.txt --name ex
 |---|---|
 | `-e`, `--extract SRC DEST` | Extract many `.zip` files from `SRC` into `DEST`. |
 | `-c`, `--convert SRC DEST` | Convert image folders into chapter PDFs. |
-| `-m`, `--merge SRC DEST` | Merge chapter PDFs into volumes based on `vols.txt`. |
+| `-m`, `--merge SRC DEST` | Merge chapter PDFs into volumes based on volume interval file. |
 | `-cm`, `--convert-merge SRC DEST` | Pipeline: convert and merge. |
 | `-a`, `--all SRC DEST` | Pipeline: extract, convert, and merge. |
+| `-sc`, `--scrape NAME DEST` | Scrape wikipedia for finding the chapters intervals of a manga. |
 
 | Data flag | Description |
 |---|---|
-| `-v`, `--vols VOLS` | File with increasing chapter cutoffs (required for merge pipelines). |
+| `-f`, `--file FILE` | File with increasing chapter cutoffs (required for merge pipelines). |
 | `-n`, `--name NAME` | Override base output name (otherwise uses destination folder name). |
 | `-s`, `--skip` | On error during processing, log continue to the next item instead of aborting. | 
+| `-v`, `--verbose` | Enable detailed output after scraping. |
 
 ## Running Tests
 
@@ -147,6 +152,8 @@ Workflow file: `.github/workflows/ci.yml`
 - Pillow
 - pypdf
 - rich
+- requests
+- beautifulsoup4
 - pytest (dev)
 
 ## Contributing
