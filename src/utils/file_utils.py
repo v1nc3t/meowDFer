@@ -2,7 +2,7 @@ import os
 
 from .naming_utils import extract_chapter_number, extract_page_number
 
-def get_zip_files(src):
+def get_zip_files(src: str) -> list[str]:
     if not os.path.exists(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
 
@@ -13,7 +13,7 @@ def get_zip_files(src):
 
     return files
 
-def get_folders(src):
+def get_folders(src: str) -> list[str]:
     if not os.path.isdir(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
 
@@ -24,7 +24,7 @@ def get_folders(src):
     
     return folders
     
-def sort_chapters(files):
+def sort_chapters(files: list[str]) -> list[str]:
     if not files:
         raise ValueError(f"No folders found to sort.")
     
@@ -35,7 +35,7 @@ def sort_chapters(files):
 
     return sorted_folders
 
-def get_images(src):
+def get_images(src: str) -> list[str]:
     if not os.path.isdir(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
     
@@ -46,7 +46,7 @@ def get_images(src):
     
     return images
 
-def sort_page_number(files):
+def sort_page_number(files: list[str]) -> list[str]:
     if not files:
         raise ValueError(f"No files found.")
 
@@ -56,7 +56,7 @@ def sort_page_number(files):
 
     return sorted_files
 
-def get_pdfs(src):
+def get_pdfs(src: str) -> list[str]:
     if not os.path.isdir(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
     
@@ -67,7 +67,7 @@ def get_pdfs(src):
     
     return pdfs
     
-def get_volumes_file(src):
+def get_volumes_file(src: str) -> list[int]:
     if not os.path.isfile(src):
         raise FileNotFoundError(f"Volume intervals file not found: {src}")
 
@@ -83,7 +83,7 @@ def get_volumes_file(src):
     
     return intervals
 
-def get_chapter_map(files):
+def get_chapter_map(files: list[str]) -> dict[int, str]:
     chapter_map = {}
 
     for f in files:

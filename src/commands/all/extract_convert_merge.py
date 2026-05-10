@@ -1,11 +1,12 @@
 import os
 import tempfile
+from typing import Any
 
 from ..extract import extract_zips
 from ..convert import convert_pdf
 from ..merge import merge_pdf
 
-def run(src, dest, vols, name, to_skip, console):
+def run(src: str, dest: str, vols: str, name: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_extracted:
         if not extract_zips.run(src, temp_extracted, to_skip, console=console):
             return False

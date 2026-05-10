@@ -1,13 +1,14 @@
 import os
 import shutil
 import tempfile
+from typing import Any
 
 from pypdf import PdfWriter
 from ...utils import naming_utils
 from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
 
 
-def run(src_path, dest_path, vols_path, name, to_skip, console):
+def run(src_path: str, dest_path: str, vols_path: str, name: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
         if not merge(src_path, temp_dir, vols_path, name, to_skip, console):
             return False
@@ -24,7 +25,7 @@ def run(src_path, dest_path, vols_path, name, to_skip, console):
     return True
 
 
-def merge(src, dest, vols, name, to_skip, console):
+def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any) -> bool:
     try:
         pdfs = get_pdfs(src)
         sorted_pdfs = sort_chapters(pdfs)
