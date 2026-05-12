@@ -95,9 +95,9 @@ python meowdfer.py --extract <zips_folder> <out_folder>
 ### Convert
 
 Input folder: 
-- names should contain a chapter identifier, for example:
+- name should contain a chapter identifier, for example:
 `c 1`, `ch 1`, `chapter 1`.
-- should contain numberd images, for example:
+- should contain numbered images, for example:
 `1.jpg`, `13.png`, `21.jpeg`
 
 ```sh
@@ -142,14 +142,14 @@ python meowdfer.py --scrape <name> <out_file>
 | `-c`, `--convert SRC DEST` | Convert image folders into chapter PDFs. |
 | `-m`, `--merge SRC DEST` | Merge chapter PDFs into volumes based on volume interval file. |
 | `-cm`, `--convert-merge SRC DEST` | Pipeline: convert and merge. |
-| `-a`, `--all SRC DEST` | Pipeline: extract, convert, and merge. |
+| `-a`, `--all SRC DEST` | Full pipeline: extract, convert, and merge. |
 | `-sc`, `--scrape NAME DEST` | Scrape wikipedia for finding the chapters intervals of a manga. |
 
 | Data flag | Description |
 |---|---|
 | `-f`, `--file FILE` | File with increasing chapter cutoffs (required for merge pipelines). |
 | `-n`, `--name NAME` | Override base output name (otherwise uses destination folder name). |
-| `-s`, `--skip` | On error during processing, log continue to the next item instead of aborting. | 
+| `-s`, `--skip` | Fault Tolerance: Skip files that fail instead of crashing. | 
 | `-v`, `--verbose` | Enable detailed output after scraping. |
 
 ## Running Tests
