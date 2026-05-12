@@ -16,7 +16,7 @@ Compile image collections into PDF chapters and volumes.
 
 ## Installation
 
-### Linux
+! make sure to use python 3.10 or higher installed on your system
 
 1. Clone the repository:
 ```sh
@@ -25,9 +25,26 @@ cd meowDFer
 ```
 
 2. Create and activate a virtual environment:
+
 ```sh
-python3 -m venv .venv
+python -m venv .venv
+```
+
+3. Activate the virtual environment:
+
+### Linux
+```sh
 source .venv/bin/activate
+```
+
+### Windows
+- powershell
+```powershell
+.venv\Scripts\Activate.ps1
+```
+- cmd
+```cmd
+.venv\Scripts\activate.bat
 ```
 
 3. Install the package:
@@ -36,6 +53,8 @@ pip install -e .
 ```
 
 Alternatively:
+
+### Linux
 
 2. Make script executable:
 ```sh
@@ -51,12 +70,12 @@ chmod +x meowdfer.py
 
 Show help:
 ```sh
-python3 meowdfer.py -h
+python meowdfer.py -h
 ```
 
 CLI syntax:
 ```sh
-python3 meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc NAME DEST) [-f FILE] [-n NAME] [-s] [-v]
+python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc NAME DEST) [-f FILE] [-n NAME] [-s] [-v]
 ```
 
 Notes:
@@ -70,7 +89,7 @@ Notes:
 ### Extract
 
 ```sh
-python3 meowdfer.py --extract <zips_folder> <out_folder>
+python meowdfer.py --extract <zips_folder> <out_folder>
 ```
 
 ### Convert
@@ -82,7 +101,7 @@ Input folder:
 `1.jpg`, `13.png`, `21.jpeg`
 
 ```sh
-python3 meowdfer.py --convert <img_folders> <out_folder> --name example
+python meowdfer.py --convert <img_folders> <out_folder> --name example
 ```
 
 ### Merge
@@ -93,26 +112,26 @@ python3 meowdfer.py --convert <img_folders> <out_folder> --name example
 ```
 
 ```sh
-python3 meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name example
 ```
 
 ### Pipelines
 
 Convert -> Merge:
 ```sh
-python3 meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example
 ```
 
 Extract -> Convert -> Merge:
 ```sh
-python3 meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
 ```
 
 ### Scrape 
 scrapes wikipedia for finding the chapters intervals of a manga.
 
 ```sh
-python3 meowdfer.py --scrape <name> <out_file>
+python meowdfer.py --scrape <name> <out_file>
 ```
 
 ## CLI Options
