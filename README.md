@@ -16,7 +16,7 @@ Compile image collections into PDF chapters and volumes.
 
 ## Installation
 
-### Linux
+! make sure to use python 3.10 or higher installed on your system
 
 1. Clone the repository:
 ```sh
@@ -25,9 +25,26 @@ cd meowDFer
 ```
 
 2. Create and activate a virtual environment:
+
 ```sh
-python3 -m venv .venv
+python -m venv .venv
+```
+
+3. Activate the virtual environment:
+
+### Linux
+```sh
 source .venv/bin/activate
+```
+
+### Windows
+- powershell
+```powershell
+.venv\Scripts\Activate.ps1
+```
+- cmd
+```cmd
+.venv\Scripts\activate.bat
 ```
 
 3. Install the package:
@@ -36,6 +53,8 @@ pip install -e .
 ```
 
 Alternatively:
+
+### Linux
 
 2. Make script executable:
 ```sh
@@ -51,12 +70,12 @@ chmod +x meowdfer.py
 
 Show help:
 ```sh
-python3 meowdfer.py -h
+python meowdfer.py -h
 ```
 
 CLI syntax:
 ```sh
-python3 meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc NAME DEST) [-f FILE] [-n NAME] [-s] [-v]
+python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc NAME DEST) [-f FILE] [-n NAME] [-s] [-v]
 ```
 
 Notes:
@@ -70,19 +89,19 @@ Notes:
 ### Extract
 
 ```sh
-python3 meowdfer.py --extract <zips_folder> <out_folder>
+python meowdfer.py --extract <zips_folder> <out_folder>
 ```
 
 ### Convert
 
 Input folder: 
-- names should contain a chapter identifier, for example:
+- name should contain a chapter identifier, for example:
 `c 1`, `ch 1`, `chapter 1`.
-- should contain numberd images, for example:
+- should contain numbered images, for example:
 `1.jpg`, `13.png`, `21.jpeg`
 
 ```sh
-python3 meowdfer.py --convert <img_folders> <out_folder> --name example
+python meowdfer.py --convert <img_folders> <out_folder> --name example
 ```
 
 ### Merge
@@ -93,26 +112,26 @@ python3 meowdfer.py --convert <img_folders> <out_folder> --name example
 ```
 
 ```sh
-python3 meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name example
 ```
 
 ### Pipelines
 
 Convert -> Merge:
 ```sh
-python3 meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example
 ```
 
 Extract -> Convert -> Merge:
 ```sh
-python3 meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
 ```
 
 ### Scrape 
 scrapes wikipedia for finding the chapters intervals of a manga.
 
 ```sh
-python3 meowdfer.py --scrape <name> <out_file>
+python meowdfer.py --scrape <name> <out_file>
 ```
 
 ## CLI Options
@@ -123,14 +142,14 @@ python3 meowdfer.py --scrape <name> <out_file>
 | `-c`, `--convert SRC DEST` | Convert image folders into chapter PDFs. |
 | `-m`, `--merge SRC DEST` | Merge chapter PDFs into volumes based on volume interval file. |
 | `-cm`, `--convert-merge SRC DEST` | Pipeline: convert and merge. |
-| `-a`, `--all SRC DEST` | Pipeline: extract, convert, and merge. |
+| `-a`, `--all SRC DEST` | Full pipeline: extract, convert, and merge. |
 | `-sc`, `--scrape NAME DEST` | Scrape wikipedia for finding the chapters intervals of a manga. |
 
 | Data flag | Description |
 |---|---|
 | `-f`, `--file FILE` | File with increasing chapter cutoffs (required for merge pipelines). |
 | `-n`, `--name NAME` | Override base output name (otherwise uses destination folder name). |
-| `-s`, `--skip` | On error during processing, log continue to the next item instead of aborting. | 
+| `-s`, `--skip` | Fault Tolerance: Skip files that fail instead of crashing. | 
 | `-v`, `--verbose` | Enable detailed output after scraping. |
 
 ## Running Tests
