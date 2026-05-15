@@ -36,7 +36,7 @@ def initiate():
     action_group.add_argument("-m", "--merge", nargs=2, metavar=("SRC", "DEST"), help="merge PDFs based on a file with volume intervals (requires -f/--file).")
     action_group.add_argument("-a", "--all", nargs=2, metavar=("SRC", "DEST"), help="full pipeline: extract -> convert -> merge.")
     action_group.add_argument("-cm", "--convert-merge", nargs=2, metavar=("SRC", "DEST"), help="half pipeline: convert -> merge.")
-    action_group.add_argument("-sc", "--scrape", nargs=2, metavar=("NAME", "DEST"), help="scrape wikipedia for finding the chapters intervals of a manga.")
+    action_group.add_argument("-sc", "--scrape", nargs=2, metavar=("URL", "DEST"), help="scrape site of given url, finding the chapters intervals of a manga.")
 
     # data flags  
     parser.add_argument("-f", "--file", metavar="FILE", help="name of file with intervals for volumes (Required for merge, all, convert-merge).")
@@ -149,14 +149,14 @@ def main():
         )
     
     elif args.scrape: 
-        name, dest = args.scrape
+        url, dest = args.scrape
 
         console.print(f"[bold green]Scraping: started[/bold green]")
 
         if args.verbose:
-            ok = scrape_volumes.run(name, dest, verbose=True, console=console)
+            ok = scrape_volumes.run(url, dest, verbose=True, console=console)
         else:
-            ok = scrape_volumes.run(name, dest, verbose=False, console=console)
+            ok = scrape_volumes.run(url, dest, verbose=False, console=console)
         
         _finish(
             ok,

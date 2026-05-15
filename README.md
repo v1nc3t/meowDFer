@@ -6,13 +6,14 @@ Compile image collections into PDF chapters and volumes.
 
 - Extract `.zip` archives.
 - Convert image folders into chapter PDFs.
-- Merge chapter PDFs into volume PDFs using `vols.txt`.
+- Merge chapter PDFs into volume PDFs using a chapter range file (e.g., "1, 5, 7").
 - Run end-to-end pipelines:
   - convert -> merge
   - extract -> convert -> merge
 - Transactional output behavior: results are staged first and moved to the destination only on success.
 - Skip flag: if an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
-- Verbose flag: enables detailed output after scraping. (source)
+- Scrape website, given link to a wikipedia or fandom page containing a table of volumes. Result is a list of chapter ranges for each volume.
+- Verbose flag: enables detailed output after scraping.
 
 ## Installation
 
@@ -128,10 +129,10 @@ python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name exa
 ```
 
 ### Scrape 
-scrapes wikipedia for finding the chapters intervals of a manga.
+scrapes wikipedia or fandom page, finding the chapters intervals of a manga.
 
 ```sh
-python meowdfer.py --scrape <name> <out_file>
+python meowdfer.py --scrape <url> <out_file>
 ```
 
 ## CLI Options
@@ -143,7 +144,7 @@ python meowdfer.py --scrape <name> <out_file>
 | `-m`, `--merge SRC DEST` | Merge chapter PDFs into volumes based on volume interval file. |
 | `-cm`, `--convert-merge SRC DEST` | Pipeline: convert and merge. |
 | `-a`, `--all SRC DEST` | Full pipeline: extract, convert, and merge. |
-| `-sc`, `--scrape NAME DEST` | Scrape wikipedia for finding the chapters intervals of a manga. |
+| `-sc`, `--scrape URL DEST` | Scrape wikipedia or fandom page, finding the chapters intervals of a manga. |
 
 | Data flag | Description |
 |---|---|
