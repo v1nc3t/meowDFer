@@ -48,7 +48,11 @@ def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any
         
         for ch in range(start_ch, end_ch + 1):
             if ch not in chapter_map:
-                console.print(f"[bold red]Data Error:[/bold red] Chapter {ch} missing for Volume {vol_num}")
+                if to_skip:
+                    console.print(f"[bold yellow]Skipped:[/bold yellow] chapter {ch} missing for volume {vol_num} ")
+                    continue
+
+                console.print(f"[bold red]Data Error:[/bold red] chapter {ch} missing for volume {vol_num}")
                 return False
 
         try:
