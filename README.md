@@ -3,17 +3,12 @@
 Compile image collections into PDF chapters and volumes.
 
 ## Features
-
-- Extract `.zip` archives.
-- Convert image folders into chapter PDFs.
-- Merge chapter PDFs into volume PDFs using a chapter range file (e.g., "1, 5, 7").
-- Run end-to-end pipelines:
-  - convert -> merge
-  - extract -> convert -> merge
+- Multiple commands, for each process towards making PDF (extract, convert, merge).
+- Pipelines, running commangs one afte another (convert them merge, or all).
 - Transactional output behavior: results are staged first and moved to the destination only on success.
 - Skip flag: if an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
-- Scrape website, given link to a wikipedia or fandom page containing a table of volumes. Result is a list of chapter ranges for each volume.
-- Verbose flag: enables detailed output after scraping.
+- Scrape a wikipedia or a fandom page and extract the ranges of chapters in a volume into a file (must have a table with volumes and list of chapters it contains).
+- Verbose flag, for scrape, where file created has more information.
 
 ## Installation
 
@@ -88,26 +83,33 @@ Notes:
 - `--verbose` enables detailed output after scraping. (scrape)
 
 ### Extract
+- extract `.zip` archives.
 
 ```sh
 python meowdfer.py --extract <zips_folder> <out_folder>
 ```
 
 ### Convert
+- convert image folders into chapter PDFs.
+- type flag: choose between 'chapter' and 'volume' depending on the type of conversion wanted.
+
 
 Input folder: 
-- name should contain a chapter identifier, for example:
-`c 1`, `ch 1`, `chapter 1`.
-- should contain numbered images, for example:
+- volume identifier, for example:
+`v001`, `volume 1`, `vol 1`
+- chapter identifier, for example:
+`c 1`, `ch 1`, `chapter 1`, `001`
+- page identifier, for example: numbered images
 `1.jpg`, `13.png`, `21.jpeg`
 
+
 ```sh
-python meowdfer.py --convert <img_folders> <out_folder> --name example
+python meowdfer.py --convert <img_folders> <out_folder> --name example --type chapter
 ```
 
 ### Merge
-
-`vols.txt` contains increasing chapter cutoffs, for example:
+- merge chapter PDFs into volume PDFs using a chapter range file (e.g., "1, 5, 7").
+- volume range file (e.g. `vols.txt`) contains increasing chapter cutoffs, for example:
 ```txt
 1, 7, 12, 19
 ```
@@ -129,7 +131,8 @@ python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name exa
 ```
 
 ### Scrape 
-scrapes wikipedia or fandom page, finding the chapters intervals of a manga.
+- scrape website, given link to a wikipedia or fandom page containing a table of volumes. Result is a list of chapter ranges for each volume.
+- verbose flag: enables detailed output after scraping.
 
 ```sh
 python meowdfer.py --scrape <url> <out_file>
