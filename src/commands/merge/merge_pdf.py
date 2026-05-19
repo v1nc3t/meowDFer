@@ -22,6 +22,7 @@ def run(src_path: str, dest_path: str, vols_path: str, name: str, to_skip: bool 
                 shutil.rmtree(d)
             shutil.move(s, d)
 
+    console.print(f"[bold green]Success:[/bold green] all files merged")
     return True
 
 
@@ -65,7 +66,7 @@ def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any
 
         except Exception as e:
             if to_skip:
-                console.print(f"[bold yellow]Skipping: {vol_name} due to error: {e}[/bold yellow]")
+                console.print(f"[bold yellow]Skipping:[/bold yellow] {vol_name} due to error: {e}")
                 
                 vol_num += 1
                 prev = val
