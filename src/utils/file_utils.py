@@ -1,5 +1,7 @@
 import os
 
+from functools import partial
+
 from .naming_utils import extract_chapter_number, extract_page_number, extract_volume_number
 
 def get_zip_files(src: str) -> list[str]:
@@ -24,16 +26,19 @@ def get_folders(src: str) -> list[str]:
     
     return folders
     
-def sort_chapters(files: list[str]) -> list[str]:
+def sort_chapters(files: list[str], allow_decimal: bool) -> list[str]:
     if not files:
         raise ValueError(f"No folders found to sort.")
     
-    sorted_folders = sorted(
-        (f for f in files if extract_chapter_number(f)),
-        key=extract_chapter_number
-    )
+    key_func = partial(extract_chapter_number, allow_decimal=allow_decimal)
+    
+    for f in files:
+        try:
+            key_func(f)
+        except ValueError as e:
+            raise ValueError(f"Sorting aborted: Malformed chapter folder structure. Details: {e}")
 
-    return sorted_folders
+    return sorted(files, key=key_func)
 
 def sort_volumes(files: list[str]) -> list[str]:
     if not files:
