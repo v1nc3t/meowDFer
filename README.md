@@ -43,14 +43,14 @@ source .venv/bin/activate
 .venv\Scripts\activate.bat
 ```
 
-3. Install the package:
+4. Install the package:
 ```sh
-pip install -e .
+pip install meowdfer
 ```
 
 Alternatively:
 
-### Linux
+### Linux (alternatively)
 
 2. Make script executable:
 ```sh
@@ -71,7 +71,7 @@ python meowdfer.py -h
 
 CLI syntax:
 ```sh
-python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc NAME DEST) [-f FILE] [-n NAME] [-s] [-v]
+python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [-f FILE] [-n NAME] [-s] [-v] [-t {chapter, volume}]
 ```
 
 Notes:
@@ -122,17 +122,18 @@ python meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name ex
 
 Convert -> Merge:
 ```sh
-python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example --type chapter
 ```
 
 Extract -> Convert -> Merge:
 ```sh
-python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example --type volume
 ```
 
 ### Scrape 
 - scrape website, given link to a wikipedia or fandom page containing a table of volumes. Result is a list of chapter ranges for each volume.
 - verbose flag: enables detailed output after scraping.
+- outputs into a '.txt' file
 
 ```sh
 python meowdfer.py --scrape <url> <out_file>
