@@ -8,9 +8,9 @@ from ...utils.naming_utils import extract_chapter_number, extract_volume_number,
 from ...utils.file_utils import get_folders, sort_chapters, sort_volumes, get_images, sort_page_number
 
 
-def run(src_path: str, dest_path: str, name: str, folder_type: str, to_skip: bool = False, console: Any = None) -> bool:
+def run(src_path: str, dest_path: str, name: str, folder_type: str, allow_decimal: bool = False, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
-        if not convert(src_path, temp_dir, name, folder_type, to_skip, console):
+        if not convert(src_path, temp_dir, name, folder_type, allow_decimal, to_skip, console):
             return False
 
         os.makedirs(dest_path, exist_ok=True)
@@ -26,17 +26,21 @@ def run(src_path: str, dest_path: str, name: str, folder_type: str, to_skip: boo
     return True
 
 
-def convert(src_path: str, dest_path: str, name: str, folder_type: str, to_skip: bool, console: Any) -> bool:
+def convert(src_path: str, dest_path: str, name: str, folder_type: str, allow_decimal: bool, to_skip: bool, console: Any) -> bool:
     try:
         folders = get_folders(src_path)
     except Exception as e:
         console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False
 
-    if folder_type == "chapter":
-        sorted_folders = sort_chapters(folders)
-    else:
-        sorted_folders = sort_volumes(folders)
+    try:
+        if folder_type == "chapter":
+            sorted_folders = sort_chapters(folders, allow_decimal=allow_decimal)
+        else:
+            sorted_folders = sort_volumes(folders)
+    except ValueError as e:
+        console.print(f"[bold red]Sorting Error:[/bold red] {e}")
+        return False
 
     for folder in sorted_folders:
         folder_path = os.path.join(src_path, folder)
@@ -44,7 +48,7 @@ def convert(src_path: str, dest_path: str, name: str, folder_type: str, to_skip:
 
         try:
             if folder_type == "chapter":
-                chapter_number = extract_chapter_number(folder_name, False)
+                chapter_number = extract_chapter_number(folder_name, allow_decimal)
                 pdf_name = convert_folder_to_pdf(folder_path, dest_path, folder_type, chapter_number, name)
 
                 console.print(f"[blue]Staged:[/blue] {pdf_name}")

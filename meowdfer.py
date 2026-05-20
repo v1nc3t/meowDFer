@@ -39,17 +39,18 @@ def initiate():
     action_group.add_argument("-sc", "--scrape", nargs=2, metavar=("URL", "DEST"), help="scrape site of given url, finding the chapters intervals of a manga.")
 
     # data flags  
+    parser.add_argument("-t", "--type", choices=["chapter", "volume"], help="processing mode: specify whether to convert by chapter or volume. (Required for convert, convert-merge, all)")
     parser.add_argument("-f", "--file", metavar="FILE", help="name of file with intervals for volumes (Required for merge, all, convert-merge).")
     parser.add_argument("-n", "--name", metavar="NAME", help="optional name output (files named differently than dest name).")
     parser.add_argument("-s", "--skip", action="store_true", help="on error during processing, log continue to the next item instead of aborting.")
+    parser.add_argument("-d","--decimal", action="store_true", help="allows processing of decimal chapters.")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose/detailed output.")
-    parser.add_argument("-t", "--type", choices=["chapter", "volume"], help="processing mode: specify whether to convert by chapter or volume. (Required for convert, convert-merge, all)")
 
     args = parser.parse_args()
 
     convert_actions = [args.convert, args.convert_merge, args.all]
     if any(convert_actions) and not args.type:
-        parser.error("the --mode argument (chapter or volume) is required when running convert, convert-merge, or all.")
+        parser.error("the --type argument (chapter or volume) is required when running convert, convert-merge, or all.")
 
     merge_actions = [args.merge or args.all or args.convert_merge]
     if any(merge_actions) and not args.file:
@@ -102,12 +103,13 @@ def main():
         src, dest = args.convert
         to_skip = args.skip
         folder_type = args.type
+        allow_decimal = args.decimal
 
         console.print("[bold green]Convert: started[/bold green]")
 
         with console.status("[bold green]Converting...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = convert_pdf.run(src, dest, final_name, folder_type, to_skip=to_skip ,console=console)
+            ok = convert_pdf.run(src, dest, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip ,console=console)
         
         _finish(ok, "Convert completed!", "Convert failed: destination was not updated.")
 
