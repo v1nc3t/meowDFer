@@ -22,6 +22,7 @@ def run(src_path: str, dest_path: str, name: str, folder_type: str, to_skip: boo
                 shutil.rmtree(d)
             shutil.move(s, d)
 
+    console.print(f"[bold green]Success:[/bold green] all files converted")
     return True
 
 

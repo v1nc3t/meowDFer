@@ -20,6 +20,7 @@ def run(src_path: str, dest_path: str, to_skip: bool = False, console: Any = Non
                 shutil.rmtree(d)
             shutil.move(s, d)
 
+    console.print(f"[bold green]Success:[/bold green] all files extraced")
     return True
 
 def extract(src_path: str, dest_path: str, to_skip: bool, console: Any) -> bool:
@@ -38,7 +39,7 @@ def extract(src_path: str, dest_path: str, to_skip: bool, console: Any) -> bool:
             console.print(f"[blue]Staged:[/blue] {file_name}")
         except Exception as e:
             if to_skip:
-                console.print(f"[bold yellow]Skipped: {file_name} due to error: {e}[/bold yellow]")
+                console.print(f"[bold yellow]Skipped:[/bold yellow] {file_name} due to error: {e}")
                 continue
 
             console.print(f"[bold red]Failed to process {file_name}:[/bold red] {e}")

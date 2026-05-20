@@ -22,6 +22,7 @@ def run(src_path: str, dest_path: str, vols_path: str, name: str, to_skip: bool 
                 shutil.rmtree(d)
             shutil.move(s, d)
 
+    console.print(f"[bold green]Success:[/bold green] all files merged")
     return True
 
 
@@ -47,7 +48,11 @@ def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any
         
         for ch in range(start_ch, end_ch + 1):
             if ch not in chapter_map:
-                console.print(f"[bold red]Data Error:[/bold red] Chapter {ch} missing for Volume {vol_num}")
+                if to_skip:
+                    console.print(f"[bold yellow]Skipped:[/bold yellow] chapter {ch} missing for volume {vol_num} ")
+                    continue
+
+                console.print(f"[bold red]Data Error:[/bold red] chapter {ch} missing for volume {vol_num}")
                 return False
 
         try:
@@ -65,7 +70,7 @@ def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any
 
         except Exception as e:
             if to_skip:
-                console.print(f"[bold yellow]Skipping: {vol_name} due to error: {e}[/bold yellow]")
+                console.print(f"[bold yellow]Skipping:[/bold yellow] {vol_name} due to error: {e}")
                 
                 vol_num += 1
                 prev = val
