@@ -48,12 +48,16 @@ def test_get_folders_lists_directories(tmp_path):
 
 def test_sort_chapters_orders_by_number():
     names = ["Chapter 10", "Chapter 2", "Chapter 1"]
-    assert file_utils.sort_chapters(names) == ["Chapter 1", "Chapter 2", "Chapter 10"]
+    assert file_utils.sort_chapters(names, False) == ["Chapter 1", "Chapter 2", "Chapter 10"]
+
+def test_sort_chapters_orders_by_number_decimal():
+    names = ["Chapter 10.5", "Chapter 10.3", "Chapter 1"]
+    assert file_utils.sort_chapters(names, True) == ["Chapter 1", "Chapter 10.3", "Chapter 10.5"]
 
 
 def test_sort_chapters_empty_raises():
     with pytest.raises(ValueError, match="No folders found to sort"):
-        file_utils.sort_chapters([])
+        file_utils.sort_chapters([], False)
 
 
 def test_get_images_filters_extensions(tmp_path):
