@@ -130,12 +130,13 @@ def main():
         src, dest = args.convert_merge
         to_skip = args.skip
         folder_type = args.type
+        allow_decimal = args.decimal
 
         console.print("[bold green]CM pipeline (Convert -> Merge): started[/bold green]")
 
         with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = convert_merge.run(src, dest, args.file, final_name, folder_type, to_skip=to_skip, console=console)
+            ok = convert_merge.run(src, dest, args.file, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip, console=console)
             
         _finish(
             ok,
@@ -147,12 +148,13 @@ def main():
         src, dest = args.all
         to_skip = args.skip
         folder_type = args.type
+        allow_decimal = args.decimal
 
         console.print("[bold green]All pipeline (Extract -> Convert -> Merge): started[/bold green]")
 
         with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = extract_convert_merge.run(src, dest, args.file, final_name, folder_type, to_skip=to_skip, console=console)
+            ok = extract_convert_merge.run(src, dest, args.file, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip, console=console)
 
         _finish(
             ok,
