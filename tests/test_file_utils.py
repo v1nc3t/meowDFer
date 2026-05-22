@@ -137,10 +137,15 @@ def test_get_volumes_file_must_be_sorted(tmp_path):
 
 def test_get_chapter_map_unique_keys():
     files = ["Chapter 1.pdf", "Ch 2.pdf"]
-    m = file_utils.get_chapter_map(files)
+    m = file_utils.get_chapter_map(files, False)
     assert m == {1: "Chapter 1.pdf", 2: "Ch 2.pdf"}
+    
+def test_get_chapter_map_decimal_keys():
+    files = ["Chapter 1.3.pdf", "Ch 1.pdf", "c 2.pdf"]
+    m = file_utils.get_chapter_map(files, True)
+    assert m == {1: "Ch 1.pdf", 1.3: "Chapter 1.3.pdf", 2: "c 2.pdf"}
 
 
 def test_get_chapter_map_duplicate_raises():
     with pytest.raises(ValueError, match="Duplicate chapter"):
-        file_utils.get_chapter_map(["Chapter 1 a.pdf", "Chapter 1 b.pdf"])
+        file_utils.get_chapter_map(["Chapter 1 a.pdf", "Chapter 1 b.pdf"], False)
