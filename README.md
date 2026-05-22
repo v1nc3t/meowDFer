@@ -71,16 +71,18 @@ python meowdfer.py -h
 
 CLI syntax:
 ```sh
-python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [-f FILE] [-n NAME] [-s] [-v] [-t {chapter, volume}]
+python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [-t {chapter, volume}] [-f FILE] [-n NAME] [-s] [-d] [-v]
 ```
 
 Notes:
 
 - `DEST` is created if it does not exist.
 - `--name` is optional and controls output PDF names.
-- `--file` is required for `--merge`, `--convert-merge`, and `--all`.
+- `--file` file containing chapter intervals for merging (required for `--merge`, `--convert-merge`, and `--all`).
 - `--skip` continues to the next item instead of aborting on error. (extract, convert, merge, pipelines)
 - `--verbose` enables detailed output after scraping. (scrape)
+- `--type` choose conversion type, chapter of volume
+- `--decimal` convert also decimal chapters (e.g. 10.5 will be added to volume of 10)
 
 ### Extract
 - extract `.zip` archives.
@@ -104,30 +106,31 @@ Input folder:
 
 
 ```sh
-python meowdfer.py --convert <img_folders> <out_folder> --name example --type chapter
+python meowdfer.py --convert <img_folders> <out_folder> --type chapter (optional: --name example --decimal --skip)
 ```
 
 ### Merge
 - merge chapter PDFs into volume PDFs using a chapter range file (e.g., "1, 5, 7").
+- with decimal flag (v10.5 will be merged into volume of v10)
 - volume range file (e.g. `vols.txt`) contains increasing chapter cutoffs, for example:
 ```txt
 1, 7, 12, 19
 ```
 
 ```sh
-python meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt --name example
+python meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt (optinal: --name example --decimal --skip)
 ```
 
 ### Pipelines
 
 Convert -> Merge:
 ```sh
-python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt --name example --type chapter
+python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt  --type chapter (optional: --name example --decimal --skip)
 ```
 
 Extract -> Convert -> Merge:
 ```sh
-python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name example --type volume
+python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt  --type volume (optional: --name example --decimal --skip)
 ```
 
 ### Scrape 
@@ -136,7 +139,7 @@ python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt --name exa
 - outputs into a '.txt' file
 
 ```sh
-python meowdfer.py --scrape <url> <out_file>
+python meowdfer.py --scrape <url> <out_file> (optional: --verbose)
 ```
 
 ## CLI Options
@@ -156,6 +159,8 @@ python meowdfer.py --scrape <url> <out_file>
 | `-n`, `--name NAME` | Override base output name (otherwise uses destination folder name). |
 | `-s`, `--skip` | Fault Tolerance: Skip files that fail instead of crashing. | 
 | `-v`, `--verbose` | Enable detailed output after scraping. |
+| `-t`, `--type` | processing mode for converting, either chapter or volume format (requred for convert, and pipelines). |
+| `-d`, `--decimal` | Allow conversions and merge of decimal chapters, default does not. |
 
 ## Running Tests
 
@@ -185,6 +190,7 @@ Workflow file: `.github/workflows/ci.yml`
 - rich
 - requests
 - beautifulsoup4
+- urllib3
 - pytest (dev)
 
 ## Contributing
