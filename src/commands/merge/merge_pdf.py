@@ -1,4 +1,5 @@
 import os
+import math
 import shutil
 import tempfile
 from typing import Any
@@ -8,9 +9,9 @@ from ...utils import naming_utils
 from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
 
 
-def run(src_path: str, dest_path: str, vols_path: str, name: str, to_skip: bool = False, console: Any = None) -> bool:
+def run(src_path: str, dest_path: str, vols_path: str, name: str, allow_decimal: bool = False, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
-        if not merge(src_path, temp_dir, vols_path, name, to_skip, console):
+        if not merge(src_path, temp_dir, vols_path, name, allow_decimal, to_skip, console):
             return False
 
         os.makedirs(dest_path, exist_ok=True)
@@ -26,18 +27,19 @@ def run(src_path: str, dest_path: str, vols_path: str, name: str, to_skip: bool 
     return True
 
 
-def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any) -> bool:
+def merge(src: str, dest: str, vols: str, name: str, allow_decimal: bool, to_skip: bool, console: Any) -> bool:
     try:
         pdfs = get_pdfs(src)
-        sorted_pdfs = sort_chapters(pdfs)
+        sorted_pdfs = sort_chapters(pdfs, allow_decimal)
         intervals = get_volumes_file(vols)
-        chapter_map = get_chapter_map(sorted_pdfs)
+        chapter_map = get_chapter_map(sorted_pdfs, allow_decimal)
     except (FileNotFoundError, ValueError) as e:
         console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False
 
     vol_num = 1
     prev = 0
+
     for val in intervals:
         start_ch, end_ch = prev + 1, val
         vol_name = naming_utils.create_volume_name(name, vol_num) + ".pdf"
@@ -46,21 +48,45 @@ def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any
             console.print(f"[bold red]Alignment Error:[/bold red] Volume {vol_num} range invalid ({start_ch}-{end_ch})")
             return False
         
-        for ch in range(start_ch, end_ch + 1):
-            if ch not in chapter_map:
-                if to_skip:
-                    console.print(f"[bold yellow]Skipped:[/bold yellow] chapter {ch} missing for volume {vol_num} ")
-                    continue
+        chapters_in_this_vol = []
+        for ch_num in sorted(chapter_map.keys()):
+            base_ch = math.floor(ch_num)
+            if start_ch <= base_ch <= end_ch:
+                chapters_in_this_vol.append(ch_num)
+        
+        missing_chapters = []
+        for exact_ch in range(start_ch, end_ch + 1):
+            if not any(math.floor(k) == exact_ch for k in chapter_map.keys()):
+                missing_chapters.append(exact_ch)
 
-                console.print(f"[bold red]Data Error:[/bold red] chapter {ch} missing for volume {vol_num}")
-                return False
+        if missing_chapters:
+            msg = f"Chapters {missing_chapters} missing completely for volume {vol_num}"
+            if to_skip:
+                console.print(f"[bold yellow]Skipped:[/bold yellow] volume {vol_num}, missing core chapters.")
+                vol_num += 1
+                prev = val
+                continue
+
+            console.print(f"[bold red]Data Error:[/bold red] volume {vol_num} is missing chapters: {missing_chapters}")
+            return False
+        
+        if not chapters_in_this_vol:
+            if to_skip:
+                console.print(f"[bold yellow]Skipped:[/bold yellow] volume {vol_num} has no matching files in range {start_ch}-{end_ch}.")
+                vol_num += 1
+                prev = val
+                continue
+            
+            console.print(f"[bold red]Data Error:[/bold red] volume {vol_num} has no matching files in range {start_ch}-{end_ch}.")
+            return False
 
         try:
             merger = PdfWriter()
             temp_vol_path = os.path.join(dest, vol_name)
 
-            for ch in range(start_ch, end_ch + 1):
-                merger.append(os.path.join(src, chapter_map[ch]))
+            for ch_num in chapters_in_this_vol:
+                file_path = os.path.join(src, chapter_map[ch_num])
+                merger.append(file_path)
 
             with open(temp_vol_path, "wb") as f_out:
                 merger.write(f_out)

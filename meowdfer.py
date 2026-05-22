@@ -116,12 +116,13 @@ def main():
     elif args.merge:
         src, dest = args.merge
         to_skip = args.skip
+        allow_decimal = args.decimal
 
         console.print("[bold green]Merge: started[/bold green]")
 
         with console.status("[bold green]Merging...", spinner="dots"):
             final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = merge_pdf.run(src, dest, args.file, final_name, to_skip=to_skip,console=console)
+            ok = merge_pdf.run(src, dest, args.file, final_name, allow_decimal=allow_decimal, to_skip=to_skip,console=console)
         
         _finish(ok, "Merge completed!", "Merge failed: destination was not updated.")
 
