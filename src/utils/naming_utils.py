@@ -8,7 +8,7 @@ CHAPTER_PREFIX_RX = re.compile(
 PAGE_RX = re.compile(r'(?<!\.)(\d+)[^\d]*?\.[a-zA-Z0-9]+$')
 
 
-def create_volume_name(name: str, volume_number: int) -> str:
+def create_volume_name(name: str, volume_number: float) -> str:
     return f"{name} Volume {volume_number}"
 
 def extract_volume_number(file_name: str) -> int:
@@ -21,7 +21,7 @@ def extract_volume_number(file_name: str) -> int:
     return int(match.group(1))
 
 
-def create_chapter_name(name: str, chapter_number: int) -> str:
+def create_chapter_name(name: str, chapter_number: float) -> str:
     return f"{name} Chapter {chapter_number}"
 
 def extract_chapter_number(file_name: str, allow_decimal: bool = True) -> float:

@@ -96,14 +96,20 @@ def get_volumes_file(src: str) -> list[int]:
     
     return intervals
 
-def get_chapter_map(files: list[str]) -> dict[int, str]:
-    chapter_map = {}
+def get_chapter_map(files: list[str], allow_decimal: bool) -> dict[int, str]:
+    chapter_map: dict[float | int, str] = {}
 
     for f in files:
-        ch = extract_chapter_number(f)
+        try:
+            ch = extract_chapter_number(f, allow_decimal)
+        except ValueError as e:
+            raise ValueError(f"Failed to build chapter map. Extraction error on file '{f}': {e}")
 
         if ch in chapter_map:
-            raise ValueError(f"Duplicate chapter detected: {ch}.")
+            raise ValueError(
+                f"Duplicate chapter detected: {ch}. "
+                f"Conflict between current file '{f}' and existing entry '{chapter_map[ch]}'."
+            )
         
         chapter_map[ch] = f
     
