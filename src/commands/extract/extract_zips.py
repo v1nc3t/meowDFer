@@ -3,8 +3,7 @@ import shutil
 import tempfile
 from typing import Any
 
-from ...utils.file_utils import get_zip_files
-from zipfile import ZipFile
+from ...utils.file_utils import get_compressed_files
 
 def run(src_path: str, dest_path: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -24,18 +23,23 @@ def run(src_path: str, dest_path: str, to_skip: bool = False, console: Any = Non
     return True
 
 def extract(src_path: str, dest_path: str, to_skip: bool, console: Any) -> bool:
+    if to_skip:
+        log_skip = lambda f: console.print(f"[bold yellow]Skipped:[/bold yellow] unsupported compressed file fromat {f}")
+    else:
+        log_skip = lambda f: console.print(f"[bold red]Error:[/bold red] unsupported compressed file fromat {f}")
+
     try:
-        zip_files = get_zip_files(src_path)
+        zip_files = get_compressed_files(src_path, on_skip=log_skip)
     except (FileNotFoundError, ValueError) as e:
         console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False
 
     os.makedirs(dest_path, exist_ok=True)
     for file_name in zip_files:
-        zip_path = os.path.join(src_path, file_name)
+        archive_path = os.path.join(src_path, file_name)
         try:
-            with ZipFile(zip_path, "r") as zip_ref:
-                zip_ref.extractall(dest_path)
+            shutil.unpack_archive(archive_path, extract_dir=dest_path)
+
             console.print(f"[blue]Staged:[/blue] {file_name}")
         except Exception as e:
             if to_skip:
