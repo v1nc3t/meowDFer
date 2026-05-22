@@ -3,6 +3,7 @@
 Compile image collections into PDF chapters and volumes.
 
 ## Features
+- Extraxct formats: ".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz"
 - Multiple commands, for each process towards making PDF (extract, convert, merge).
 - Pipelines, running commangs one afte another (convert them merge, or all).
 - Transactional output behavior: results are staged first and moved to the destination only on success.
@@ -86,6 +87,7 @@ Notes:
 
 ### Extract
 - extract `.zip` archives.
+- formats: ".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz"
 
 ```sh
 python meowdfer.py --extract <zips_folder> <out_folder>
