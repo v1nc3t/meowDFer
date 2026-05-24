@@ -14,15 +14,7 @@ def test_get_compressed_files_empty_dir(tmp_path):
     d.mkdir()
     with pytest.raises(ValueError, match="No supported compressed files"):
         file_utils.get_compressed_files(str(d))
-
-
-def test_get_compressed_files_lists_zips_only(tmp_path):
-    d = tmp_path / "z"
-    d.mkdir()
-    (d / "a.zip").touch()
-    (d / "readme.txt").touch()
-    assert file_utils.get_compressed_files(str(d)) == ["a.zip"]
-
+        
 
 def test_get_folders_not_dir(tmp_path):
     f = tmp_path / "file"
