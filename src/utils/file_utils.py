@@ -1,24 +1,18 @@
 import os
 
 from functools import partial
-from typing import Callable
 
 from .naming_utils import extract_chapter_number, extract_page_number, extract_volume_number
 
-def get_compressed_files(src: str, on_skip: Callable[[str], None] = None) -> list[str]:
+def get_compressed_files(src: str) -> list[str]:
     if not os.path.exists(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
 
-    valid_extensions = (".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz")
     files = []
-
     for f in os.listdir(src):
         full_path = os.path.join(src, f)
         if os.path.isfile(full_path):
-            if f.lower().endswith(valid_extensions):
-                files.append(f)
-            elif on_skip:
-                on_skip(f)
+            files.append(f)
     
     if not files:
         raise ValueError(f"No supported compressed files found in directory: {src}")
