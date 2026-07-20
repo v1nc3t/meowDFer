@@ -12,6 +12,7 @@ import argparse
 _ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
+from pathlib import Path
 from rich.console import Console
 from rich.traceback import install
 from src.commands.extract import extract_zips
@@ -48,18 +49,39 @@ def initiate():
 
     args = parser.parse_args()
 
+    # 1. Clean and normalize the 2-argument action paths
+    for action in ['extract', 'convert', 'merge', 'all', 'convert_merge', 'scrape']:
+        val = getattr(args, action)
+        if val:
+            cleaned_paths = []
+            for p in val:
+                # Expand environment variables ($VAR), expand home (~), and get absolute path
+                expanded_str = os.path.expandvars(p)
+                path_obj = Path(expanded_str).expanduser().resolve()
+                cleaned_paths.append(path_obj)
+            setattr(args, action, cleaned_paths)
+    
+    # 2. Clean and normalize the file path
+    if args.file:
+        expanded_file = os.path.expandvars(args.file)
+        args.file = Path(expanded_file).expanduser().resolve()
+
+    # 3. Validations (Notice how clean validation is with pathlib!)
     convert_actions = [args.convert, args.convert_merge, args.all]
     if any(convert_actions) and not args.type:
         parser.error("the --type argument (chapter or volume) is required when running convert, convert-merge, or all.")
 
-    merge_actions = [args.merge or args.all or args.convert_merge]
-    if any(merge_actions) and not args.file:
+    # Check if any of the merge actions are active
+    if (args.merge or args.all or args.convert_merge) and not args.file:
         parser.error("the --file/-f argument is required when running merge, convert-merge, or all.")
 
-    if args.file and not os.path.isfile(args.file):
+    # Pathlib uses .is_file() instead of os.path.isfile()
+    if args.file and not args.file.is_file():
         parser.error(f"The file '{args.file}' does not exist.")
 
     return args
+
+
 # [red][/red]
 banner = r"""[purple]
                                                  [red]/$$$$$$$  /$$$$$$$$[/red]                 

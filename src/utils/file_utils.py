@@ -1,17 +1,17 @@
 import os
-
 from functools import partial
-
 from .naming_utils import extract_chapter_number, extract_page_number, extract_volume_number
 
 def get_compressed_files(src: str) -> list[str]:
     if not os.path.exists(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
 
+    valid_exts = (".zip", ".cbz", ".rar", ".cbr", ".tar", ".gz")
+    
     files = []
     for f in os.listdir(src):
         full_path = os.path.join(src, f)
-        if os.path.isfile(full_path):
+        if os.path.isfile(full_path) and f.lower().endswith(valid_exts):
             files.append(f)
     
     if not files:
@@ -32,7 +32,7 @@ def get_folders(src: str) -> list[str]:
     
 def sort_chapters(files: list[str], allow_decimal: bool) -> list[str]:
     if not files:
-        raise ValueError(f"No folders found to sort.")
+        raise ValueError("No folders found to sort.")
     
     key_func = partial(extract_chapter_number, allow_decimal=allow_decimal)
     
@@ -57,7 +57,7 @@ def get_images(src: str) -> list[str]:
     if not os.path.isdir(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
     
-    images = [f for f in os.listdir(src) if f.endswith((".png", ".jpg", ".jpeg"))]
+    images = [f for f in os.listdir(src) if f.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
 
     if not images:
         raise ValueError(f"No images found in directory: {src}")
@@ -100,7 +100,7 @@ def get_volumes_file(src: str) -> list[int]:
     
     return intervals
 
-def get_chapter_map(files: list[str], allow_decimal: bool) -> dict[int, str]:
+def get_chapter_map(files: list[str], allow_decimal: bool) -> dict[float | int, str]:
     chapter_map: dict[float | int, str] = {}
 
     for f in files:
@@ -118,4 +118,3 @@ def get_chapter_map(files: list[str], allow_decimal: bool) -> dict[int, str]:
         chapter_map[ch] = f
     
     return chapter_map
-    
