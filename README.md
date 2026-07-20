@@ -90,7 +90,7 @@ Notes:
 - formats: ".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz"
 
 ```sh
-python meowdfer.py --extract <zips_folder> <out_folder>
+python meowdfer.py --extract <zips_folder> <out_folder> (optional: --name example --skip)
 ```
 
 ### Convert
@@ -193,6 +193,7 @@ Workflow file: `.github/workflows/ci.yml`
 - requests
 - beautifulsoup4
 - urllib3
+- patool
 - pytest (dev)
 
 ## Contributing
