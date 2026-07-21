@@ -5,8 +5,8 @@ import tempfile
 from typing import Any
 
 from pypdf import PdfWriter
-from ...utils import naming_utils
-from ...utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
+from utils import naming_utils
+from utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
 
 
 def run(src_path: str, dest_path: str, vols_path: str, name: str, allow_decimal: bool = False, to_skip: bool = False, console: Any = None) -> bool:

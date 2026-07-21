@@ -7,7 +7,7 @@ from typing import Any
 import patoolib
 from patoolib.util import PatoolError
 
-from ...utils.file_utils import get_compressed_files
+from utils.file_utils import get_compressed_files
 
 def run(src_path: str, dest_path: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:

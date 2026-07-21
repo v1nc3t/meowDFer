@@ -4,8 +4,8 @@ import tempfile
 from typing import Any
 
 from PIL import Image
-from ...utils.naming_utils import extract_chapter_number, extract_volume_number, create_chapter_name, create_volume_name
-from ...utils.file_utils import get_folders, sort_chapters, sort_volumes, get_images, sort_page_number
+from utils.naming_utils import extract_chapter_number, extract_volume_number, create_chapter_name, create_volume_name
+from utils.file_utils import get_folders, sort_chapters, sort_volumes, get_images, sort_page_number
 
 
 def run(src_path: str, dest_path: str, name: str, folder_type: str, allow_decimal: bool = False, to_skip: bool = False, console: Any = None) -> bool:
