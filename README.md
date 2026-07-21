@@ -1,208 +1,224 @@
 # meowDFer
 
-Compile image collections into PDF chapters and volumes.
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
+
+A high-performance CLI tool for processing image collections and converting compressed archives into structured, organized PDF chapters and volumes.
+
+---
 
 ## Features
-- Extraxct formats: ".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz"
-- Multiple commands, for each process towards making PDF (extract, convert, merge).
-- Pipelines, running commangs one afte another (convert them merge, or all).
-- Transactional output behavior: results are staged first and moved to the destination only on success.
-- Skip flag: if an error occurs during processing (e.g., invalid file format), log the error and continue to the next item instead of aborting.
-- Scrape a wikipedia or a fandom page and extract the ranges of chapters in a volume into a file (must have a table with volumes and list of chapters it contains).
-- Verbose flag, for scrape, where file created has more information.
+
+- **Multi-Format Archive Extraction:** Supports `.zip`, `.cbz`, `.rar`, `.cbr`, `.tar`, `.tar.gz`, `.tar.bz2`, `.tar.xz`, and `.tgz`.
+- **Pipeline Workflows:** Run complete batch chains seamlessly (`Extract` -> `Convert` -> `Merge`).
+- **Transactional File Safety:** Results are processed in temporary staging zones and moved to the final destination directory only upon success.
+- **Fault-Tolerant Processing (`--skip`):** Automatically logs corrupted archives or broken folders and skips to the next item instead of aborting the entire batch.
+- **Automated Web Scraping:** Scrapes Wikipedia or Fandom tables to generate volume interval mapping files (`vols.txt`) automatically.
+- **Cross-Platform:** Runs natively on Linux, macOS, and Windows or via an isolated Docker container environment.
+
+---
+
+## Prerequisites
+
+Before installing `meowDFer`, ensure your environment meets the following requirements:
+
+### For Native Python Installation
+- **Python:** Version `3.10` or higher.
+- **System Extraction Tools:** `patoolib` depends on native system archive utilities. Ensure your system has the relevant tools installed (e.g., `p7zip-full`, `unzip`, `unrar`, `tar`).
+
+### For Docker Installation (Recommended)
+- **Docker:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running (Windows/macOS) or `docker` engine installed (Linux).
+
+---
 
 ## Installation
 
-! make sure to use python 3.10 or higher installed on your system
+### Option A: Docker (Recommended)
 
-1. Clone the repository:
-```sh
-git clone https://github.com/v1nc3t/meowDFer.git
-cd meowDFer
-```
+Running `meowDFer` via Docker guarantees all extraction backends are configured cleanly without installing dependencies directly on your host operating system.
 
-2. Create and activate a virtual environment:
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/v1nc3t/meowDFer.git
+   cd meowDFer
+   ```
 
-```sh
-python -m venv .venv
-```
+2. **Run the automated setup for your OS:**
 
-3. Activate the virtual environment:
+   * **Linux / macOS:**
+     ```bash
+     chmod +x install.sh
+     ./install.sh
+     ```
+     *Builds the image and creates a global launcher executable at `/usr/local/bin/meowdfer`.*
 
-### Linux
-```sh
-source .venv/bin/activate
-```
+   * **Windows (PowerShell):**
+     ```powershell
+     powershell -ExecutionPolicy Bypass -File .\install.ps1
+     ```
+     *Builds the image and appends the project folder to your User `PATH` environment variable. **Restart your terminal after installation** to refresh environment variables.*
 
-### Windows
-- powershell
-```powershell
-.venv\Scripts\Activate.ps1
-```
-- cmd
-```cmd
-.venv\Scripts\activate.bat
-```
+---
 
-4. Install the package:
-```sh
-pip install meowdfer
-```
+### Option B: Native Python Installation
 
-Alternatively:
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/v1nc3t/meowDFer.git
+   cd meowDFer
+   ```
 
-### Linux (alternatively)
+2. **Create and activate a virtual environment:**
 
-2. Make script executable:
-```sh
-chmod +x meowdfer.py
-```
+   * **Linux / macOS:**
+     ```bash
+     python3 -m venv .venv
+     source .venv/bin/activate
+     ```
 
-3. Run it as executable:
-```sh
-./meowdfer.py -h
-```
+   * **Windows (PowerShell):**
+     ```powershell
+     python -m venv .venv
+     .\.venv\Scripts\Activate.ps1
+     ```
+
+   * **Windows (Command Prompt):**
+     ```cmd
+     python -m venv .venv
+     .\.venv\Scripts\activate.bat
+     ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install .
+   ```
+
+---
 
 ## Usage
 
-Show help:
-```sh
-python meowdfer.py -h
+If installed via **Docker**, run commands using `meowdfer`. If running **natively**, run using `python meowdfer.py`.
+
+### Basic CLI Syntax
+```bash
+meowdfer (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [OPTIONS]
 ```
 
-CLI syntax:
-```sh
-python meowdfer.py (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [-t {chapter, volume}] [-f FILE] [-n NAME] [-s] [-d] [-v]
+---
+
+### Commands & Action Flags
+
+| Action Flag | Parameters | Description |
+|---|---|---|
+| `-e`, `--extract` | `SRC DEST` | Unpack all supported archive files from `SRC` into `DEST`. |
+| `-c`, `--convert` | `SRC DEST` | Convert image directories into chapter PDFs (requires `--type`). |
+| `-m`, `--merge` | `SRC DEST` | Merge chapter PDFs into volumes (requires `--file`). |
+| `-cm`, `--convert-merge` | `SRC DEST` | Pipeline: Convert image directories and merge them into volumes. |
+| `-a`, `--all` | `SRC DEST` | Full Pipeline: Extract archives -> Convert to PDFs -> Merge into volumes. |
+| `-sc`, `--scrape` | `URL DEST` | Scrape a Wikipedia or Fandom page to generate a volume interval text file. |
+
+### Data & Modifier Flags
+
+| Modifier Flag | Arguments | Description |
+|---|---|---|
+| `-t`, `--type` | `chapter` \| `volume` | Specify input folder structure mode (Required for `--convert`, `--convert-merge`, `--all`). |
+| `-f`, `--file` | `FILE` | Path to text file containing chapter interval cutoffs for volumes. |
+| `-n`, `--name` | `NAME` | Override base output filename prefix. |
+| `-s`, `--skip` | *None* | Enable fault tolerance: log errors and skip failing files instead of aborting. |
+| `-d`, `--decimal` | *None* | Enable parsing of decimal chapter numbers (e.g., `10.5`). |
+| `-v`, `--verbose` | *None* | Enable detailed output logging during scraping. |
+
+---
+
+## Examples
+
+### 1. Extract Archives
+Extract zip or cbz archives into structured folders:
+```bash
+meowdfer -e ./downloads/zips ./extracted_folders --skip
 ```
 
-Notes:
-
-- `DEST` is created if it does not exist.
-- `--name` is optional and controls output PDF names.
-- `--file` file containing chapter intervals for merging (required for `--merge`, `--convert-merge`, and `--all`).
-- `--skip` continues to the next item instead of aborting on error. (extract, convert, merge, pipelines)
-- `--verbose` enables detailed output after scraping. (scrape)
-- `--type` choose conversion type, chapter of volume
-- `--decimal` convert also decimal chapters (e.g. 10.5 will be added to volume of 10)
-
-### Extract
-- extract `.zip` archives.
-- formats: ".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz"
-
-```sh
-python meowdfer.py --extract <zips_folder> <out_folder> (optional: --name example --skip)
+### 2. Convert Image Directories to Chapter PDFs
+Convert folders containing images into individual chapter PDFs:
+```bash
+meowdfer -c ./extracted_folders ./chapter_pdfs --type chapter --decimal
 ```
 
-### Convert
-- convert image folders into chapter PDFs.
-- type flag: choose between 'chapter' and 'volume' depending on the type of conversion wanted.
+Expected folder conventions:
+* **Volumes:** `v001`, `volume 1`, `vol 1`
+* **Chapters:** `c 1`, `ch 1`, `chapter 1`, `001`
+* **Pages:** `1.jpg`, `13.png`, `21.jpeg`
 
-
-Input folder: 
-- volume identifier, for example:
-`v001`, `volume 1`, `vol 1`
-- chapter identifier, for example:
-`c 1`, `ch 1`, `chapter 1`, `001`
-- page identifier, for example: numbered images
-`1.jpg`, `13.png`, `21.jpeg`
-
-
-```sh
-python meowdfer.py --convert <img_folders> <out_folder> --type chapter (optional: --name example --decimal --skip)
+### 3. Scrape Volume Intervals
+Scrape a Wikipedia or Fandom entry to output a `vols.txt` mapping file:
+```bash
+meowdfer -sc "https://en.wikipedia.org/wiki/List_of_Manga_Volumes" ./vols.txt -v
 ```
 
-### Merge
-- merge chapter PDFs into volume PDFs using a chapter range file (e.g., "1, 5, 7").
-- with decimal flag (v10.5 will be merged into volume of v10)
-- volume range file (e.g. `vols.txt`) contains increasing chapter cutoffs, for example:
+The generated `vols.txt` output file format:
 ```txt
-1, 7, 12, 19
+1, 7, 12, 19, 25
 ```
 
-```sh
-python meowdfer.py --merge <pdf_folder> <out_folder> --file ./vols.txt (optinal: --name example --decimal --skip)
+### 4. Merge Chapter PDFs into Volume PDFs
+Merge chapter PDFs using the interval mapping file:
+```bash
+meowdfer -m ./chapter_pdfs ./volume_pdfs --file ./vols.txt
 ```
 
-### Pipelines
-
-Convert -> Merge:
-```sh
-python meowdfer.py --convert-merge <img_folders> <out_folder> --file ./vols.txt  --type chapter (optional: --name example --decimal --skip)
+### 5. Execute Full Pipeline
+Run extraction, image-to-PDF conversion, and volume merging in one continuous run:
+```bash
+meowdfer -a ./zips_dir ./final_volumes --type volume --file ./vols.txt --skip
 ```
 
-Extract -> Convert -> Merge:
-```sh
-python meowdfer.py --all <zips_folder> <out_folder> --file ./vols.txt  --type volume (optional: --name example --decimal --skip)
+---
+
+## Manual Docker Execution (Without Installation Scripts)
+
+If you prefer not to use the automated `install.sh` or `install.ps1` scripts, you can execute the container manually by binding your working directory:
+
+### Linux / macOS:
+```bash
+docker run --rm -it \
+    --user "$(id -u):$(id -g)" \
+    -v "$(pwd):$(pwd)" \
+    -w "$(pwd)" \
+    meowdfer:latest -a ./zips_dir ./final_volumes -t volume -f ./vols.txt
 ```
 
-### Scrape 
-- scrape website, given link to a wikipedia or fandom page containing a table of volumes. Result is a list of chapter ranges for each volume.
-- verbose flag: enables detailed output after scraping.
-- outputs into a '.txt' file
-
-```sh
-python meowdfer.py --scrape <url> <out_file> (optional: --verbose)
+### Windows (Command Prompt / PowerShell):
+```cmd
+docker run --rm -it -v "%cd%:%cd%" -w "%cd%" meowdfer:latest -a .\zips_dir .\final_volumes -t volume -f .\vols.txt
 ```
 
-## CLI Options
-
-| Command flag | Description |
-|---|---|
-| `-e`, `--extract SRC DEST` | Extract many `.zip` files from `SRC` into `DEST`. |
-| `-c`, `--convert SRC DEST` | Convert image folders into chapter PDFs. |
-| `-m`, `--merge SRC DEST` | Merge chapter PDFs into volumes based on volume interval file. |
-| `-cm`, `--convert-merge SRC DEST` | Pipeline: convert and merge. |
-| `-a`, `--all SRC DEST` | Full pipeline: extract, convert, and merge. |
-| `-sc`, `--scrape URL DEST` | Scrape wikipedia or fandom page, finding the chapters intervals of a manga. |
-
-| Data flag | Description |
-|---|---|
-| `-f`, `--file FILE` | File with increasing chapter cutoffs (required for merge pipelines). |
-| `-n`, `--name NAME` | Override base output name (otherwise uses destination folder name). |
-| `-s`, `--skip` | Fault Tolerance: Skip files that fail instead of crashing. | 
-| `-v`, `--verbose` | Enable detailed output after scraping. |
-| `-t`, `--type` | processing mode for converting, either chapter or volume format (requred for convert, and pipelines). |
-| `-d`, `--decimal` | Allow conversions and merge of decimal chapters, default does not. |
+---
 
 ## Running Tests
 
-Install dev dependencies:
-```sh
+Install developer dependencies:
+```bash
 pip install -e ".[dev]"
 ```
 
-Run tests:
-```sh
+Run test suite:
+```bash
 pytest tests/ -v
 ```
 
-## CI
+---
 
-GitHub Actions runs tests on:
+## CI/CD Workflow
 
-- Pull requests
-- Pushes to `main` and `master`
+Continuous Integration runs automatically via GitHub Actions on:
+- All Pull Requests
+- Pushes to `main` or `master` branches
 
-Workflow file: `.github/workflows/ci.yml`
+Workflow config: `.github/workflows/ci.yml`
 
-## Dependencies
-
-- Pillow
-- pypdf
-- rich
-- requests
-- beautifulsoup4
-- urllib3
-- patool
-- pytest (dev)
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit changes.
-4. Open a pull request.
+---
 
 ## License
 
-GNU General Public License v3
+Distributed under the terms of the **GNU General Public License v3**. See `LICENSE` for more information.
