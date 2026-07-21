@@ -8,19 +8,19 @@
 import os
 import sys
 import argparse
+from pathlib import Path
 
 _ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(_ROOT, "src"))
 
-from pathlib import Path
 from rich.console import Console
 from rich.traceback import install
-from src.commands.extract import extract_zips
-from src.commands.convert import convert_pdf
-from src.commands.merge import merge_pdf
-from src.commands.convert_merge import convert_merge
-from src.commands.all import extract_convert_merge
-from src.commands.scrape import scrape_volumes
+from commands.extract import extract_zips
+from commands.convert import convert_pdf
+from commands.merge import merge_pdf
+from commands.convert_merge import convert_merge
+from commands.all import extract_convert_merge
+from commands.scrape import scrape_volumes
 
 install(show_locals=True)
 
@@ -66,7 +66,7 @@ def initiate():
         expanded_file = os.path.expandvars(args.file)
         args.file = Path(expanded_file).expanduser().resolve()
 
-    # 3. Validations (Notice how clean validation is with pathlib!)
+    # 3. Validations
     convert_actions = [args.convert, args.convert_merge, args.all]
     if any(convert_actions) and not args.type:
         parser.error("the --type argument (chapter or volume) is required when running convert, convert-merge, or all.")
@@ -75,14 +75,12 @@ def initiate():
     if (args.merge or args.all or args.convert_merge) and not args.file:
         parser.error("the --file/-f argument is required when running merge, convert-merge, or all.")
 
-    # Pathlib uses .is_file() instead of os.path.isfile()
     if args.file and not args.file.is_file():
         parser.error(f"The file '{args.file}' does not exist.")
 
     return args
 
 
-# [red][/red]
 banner = r"""[purple]
                                                  [red]/$$$$$$$  /$$$$$$$$[/red]                 
                                                 [red]| $$__  $$| $$_____/[/red]                 
@@ -130,8 +128,8 @@ def main():
         console.print("[bold green]Convert: started[/bold green]")
 
         with console.status("[bold green]Converting...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = convert_pdf.run(src, dest, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip ,console=console)
+            final_name = args.name if args.name else dest.name
+            ok = convert_pdf.run(src, dest, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip, console=console)
         
         _finish(ok, "Convert completed!", "Convert failed: destination was not updated.")
 
@@ -143,8 +141,8 @@ def main():
         console.print("[bold green]Merge: started[/bold green]")
 
         with console.status("[bold green]Merging...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
-            ok = merge_pdf.run(src, dest, args.file, final_name, allow_decimal=allow_decimal, to_skip=to_skip,console=console)
+            final_name = args.name if args.name else dest.name
+            ok = merge_pdf.run(src, dest, args.file, final_name, allow_decimal=allow_decimal, to_skip=to_skip, console=console)
         
         _finish(ok, "Merge completed!", "Merge failed: destination was not updated.")
 
@@ -157,7 +155,7 @@ def main():
         console.print("[bold green]CM pipeline (Convert -> Merge): started[/bold green]")
 
         with console.status("[bold green]Pipeline...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
+            final_name = args.name if args.name else dest.name
             ok = convert_merge.run(src, dest, args.file, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip, console=console)
             
         _finish(
@@ -175,7 +173,7 @@ def main():
         console.print("[bold green]All pipeline (Extract -> Convert -> Merge): started[/bold green]")
 
         with console.status("[bold green]Pipeline...", spinner="dots"):
-            final_name = args.name if args.name else os.path.basename(dest.rstrip(os.sep))
+            final_name = args.name if args.name else dest.name
             ok = extract_convert_merge.run(src, dest, args.file, final_name, folder_type, allow_decimal=allow_decimal, to_skip=to_skip, console=console)
 
         _finish(
@@ -189,10 +187,7 @@ def main():
 
         console.print(f"[bold green]Scraping: started[/bold green]")
 
-        if args.verbose:
-            ok = scrape_volumes.run(url, dest, verbose=True, console=console)
-        else:
-            ok = scrape_volumes.run(url, dest, verbose=False, console=console)
+        ok = scrape_volumes.run(url, dest, verbose=bool(args.verbose), console=console)
         
         _finish(
             ok,

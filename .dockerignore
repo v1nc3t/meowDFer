@@ -1,0 +1,36 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Git & CI/CD
+.git/
+.gitignore
+.github/
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker / Deployment Files
+Dockerfile*
+docker-compose*
+*.sh
+*.ps1
+*.bat
+
+# Output artifacts & sample data
+*.pdf
+*.zip
+*.cbz
+*.rar
+*.cbr
