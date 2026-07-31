@@ -6,7 +6,10 @@ def get_compressed_files(src: str) -> list[str]:
     if not os.path.exists(src):
         raise FileNotFoundError(f"Source directory not found: {src}")
 
-    valid_exts = (".zip", ".cbz", ".rar", ".cbr", ".tar", ".gz")
+    valid_exts = (
+        ".zip", ".cbz", ".rar", ".cbr", ".tar", ".tgz",
+        ".gz", ".bz2", ".xz"
+    )
     
     files = []
     for f in os.listdir(src):
