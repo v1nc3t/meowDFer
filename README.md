@@ -59,13 +59,6 @@ Running `meowDFer` via Docker guarantees all extraction backends are configured 
      ```
      *Builds the image and appends the project folder to your User `PATH` environment variable. **Restart your terminal after installation** to refresh environment variables.*
 
-#### Video demo installation with docker
-
-<video width="100%" controls muted loop>
-  <source src="./assets/linux_docker_install.mp4">
-  Your browser does not support the video tag.
-</video>
-
 ---
 
 ### Option B: Native Python Installation
@@ -111,13 +104,6 @@ If installed via **Docker**, run commands using `meowdfer`. If running **nativel
 ```bash
 meowdfer (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [OPTIONS]
 ```
-
-#### Video demo usage
-
-<video width="100%" controls muted loop>
-  <source src="./assets/usage_pipeline.mp4">
-  Your browser does not support the video tag.
-</video>
 
 ---
 
