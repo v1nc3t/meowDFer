@@ -53,18 +53,23 @@ def initiate():
 
     args = parser.parse_args()
 
-    # 1. Clean and normalize 2-argument action paths
-    actions = ['extract', 'convert', 'merge', 'all', 'convert_merge', 'scrape']
-    for action in actions:
+    # 1. Clean and normalize 2-argument action paths (filesystem targets only)
+    path_actions = ['extract', 'convert', 'merge', 'all', 'convert_merge']
+    for action in path_actions:
         val = getattr(args, action)
         if val:
             setattr(args, action, [normalize_path(p) for p in val])
+
+    # 2. Handle scrape separately: URL stays raw, DEST gets normalized
+    if args.scrape:
+        raw_url, dest_path = args.scrape
+        args.scrape = [raw_url, normalize_path(dest_path)]
     
-    # 2. Clean and normalize file path
+    # 3. Clean and normalize file path
     if args.file:
         args.file = normalize_path(args.file)
 
-    # 3. Validations
+    # 4. Validations
     convert_actions = [args.convert, args.convert_merge, args.all]
     if any(convert_actions) and not args.type:
         parser.error("the --type argument (chapter or volume) is required when running convert, convert-merge, or all.")
