@@ -61,10 +61,7 @@ Running `meowDFer` via Docker guarantees all extraction backends are configured 
 
 #### Video demo installation with docker
 
-<video width="100%" controls muted loop>
-  <source src="./assets/linux_docker_install.mp4">
-  Your browser does not support the video tag.
-</video>
+![Docker Install](./assets/linux_docker_install.gif)
 
 ---
 
@@ -114,10 +111,7 @@ meowdfer (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST |
 
 #### Video demo usage
 
-<video width="100%" controls muted loop>
-  <source src="./assets/usage_pipeline.mp4">
-  Your browser does not support the video tag.
-</video>
+![Usage Pipeline](./assets/usage_pipeline.gif)
 
 ---
 
