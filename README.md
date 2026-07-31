@@ -4,7 +4,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 
-A high-performance CLI tool for processing image collections and converting compressed archives into structured, organized PDF chapters and volumes.
+A CLI tool for processing image collections and converting compressed archives into structured, organized PDF chapters and volumes.
 
 ---
 
@@ -59,6 +59,13 @@ Running `meowDFer` via Docker guarantees all extraction backends are configured 
      ```
      *Builds the image and appends the project folder to your User `PATH` environment variable. **Restart your terminal after installation** to refresh environment variables.*
 
+#### Video demo installation with docker
+
+<video width="100%" controls muted loop>
+  <source src="./assets/linux_docker_install.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
 ---
 
 ### Option B: Native Python Installation
@@ -105,6 +112,13 @@ If installed via **Docker**, run commands using `meowdfer`. If running **nativel
 meowdfer (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [OPTIONS]
 ```
 
+#### Video demo usage
+
+<video width="100%" controls muted loop>
+  <source src="./assets/usage_pipeline.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
 ---
 
 ### Commands & Action Flags
@@ -129,12 +143,23 @@ meowdfer (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST |
 | `-d`, `--decimal` | *None* | Enable parsing of decimal chapter numbers (e.g., `10.5`). |
 | `-v`, `--verbose` | *None* | Enable detailed output logging during scraping. |
 
+### Command-Specific Flags
+
+| Command | Required Flags | Optional Flags |
+|---|---|---|
+| `-e`, `--extract` | none | `-s`, `--skip` |
+| `-c`, `--convert` | `-t`, `--type` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
+| `-m`, `--merge` | `-f`, `--file` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
+| `-cm`, `--convert-merge` | `-t`, `--type`; `-f`, `--file` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
+| `-a`, `--all` | `-t`, `--type`; `-f`, `--file` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
+| `-sc`, `--scrape` | none | `-v`, `--verbose` |
+
 ---
 
 ## Examples
 
 ### 1. Extract Archives
-Extract zip or cbz archives into structured folders:
+Extract supported archive files into structured folders:
 ```bash
 meowdfer -e ./downloads/zips ./extracted_folders --skip
 ```

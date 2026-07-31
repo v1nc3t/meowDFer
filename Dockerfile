@@ -1,10 +1,9 @@
 FROM python:3.12-slim
 
-# Prevent Python from writing .pyc files & buffering stdout/stderr (vital for Docker logs)
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH="/app/src"
 
-# Install system dependencies required by patoolib for extraction
 RUN apt-get update && apt-get install -y --no-install-recommends \
     p7zip-full \
     unzip \
@@ -14,16 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy the modern configuration file first to leverage Docker build cache layers
 COPY pyproject.toml .
+COPY src/ ./src/
+COPY meowdfer.py .
 
-# Install dependencies directly from the pyproject.toml file
 RUN pip install --no-cache-dir .
-
-# Copy the rest of the project source tree
-COPY . .
-
-# Make the wrapper executable
 RUN chmod +x meowdfer.py
 
-ENTRYPOINT ["python", "meowdfer.py"]
+# Absolute path guarantees execution regardless of container workdir
+ENTRYPOINT ["python", "/app/meowdfer.py"]
