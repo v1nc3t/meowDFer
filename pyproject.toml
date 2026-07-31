@@ -43,3 +43,6 @@ testpaths = ["tests"]
 norecursedirs = ["src"] 
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
