@@ -1,6 +1,6 @@
 import pytest
 
-from src.utils import file_utils
+from meowdfer.utils import file_utils
 
 
 def test_get_compressed_files_missing_dir(tmp_path):

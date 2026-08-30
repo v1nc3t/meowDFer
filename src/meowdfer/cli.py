@@ -12,12 +12,13 @@ from pathlib import Path
 
 from rich.console import Console
 from rich.traceback import install
-from commands.extract import extract_zips
-from commands.convert import convert_pdf
-from commands.merge import merge_pdf
-from commands.convert_merge import convert_merge
-from commands.all import extract_convert_merge
-from commands.scrape import scrape_volumes
+
+from meowdfer.commands.extract import extract_zips
+from meowdfer.commands.convert import convert_pdf
+from meowdfer.commands.merge import merge_pdf
+from meowdfer.commands.convert_merge import convert_merge
+from meowdfer.commands.all import extract_convert_merge
+from meowdfer.commands.scrape import scrape_volumes
 
 install(show_locals=True)
 

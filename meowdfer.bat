@@ -1,13 +1,33 @@
 @echo off
-:: Disable MSYS/Git-Bash path conversion so POSIX paths map cleanly
+setlocal EnableExtensions
+
+:: Disable MSYS/Git-Bash path conversion so Windows paths map cleanly into Docker.
 set MSYS_NO_PATHCONV=1
 
-:: Check if the image exists, if not build it automatically from the script's directory (%~dp0)
-docker image inspect meowdfer:latest >nul 2>&1
-if %errorlevel% neq 0 (
-    echo First time setup: Building Docker image...
-    docker build -t meowdfer:latest "%~dp0"
+where docker >nul 2>&1
+if errorlevel 1 (
+    echo Error: Docker is not installed or not in PATH.
+    exit /b 1
 )
 
-:: Double quotes around "%cd%" ensure paths containing spaces map properly
-docker run --rm -it -v "%cd%:%cd%" -w "%cd%" meowdfer:latest %*
+docker info >nul 2>&1
+if errorlevel 1 (
+    echo Error: Docker daemon is not running. Start Docker Desktop and retry.
+    exit /b 1
+)
+
+docker image inspect meowdfer:latest >nul 2>&1
+if errorlevel 1 (
+    echo First-time setup: building Docker image...
+    docker build -t meowdfer:latest "%~dp0."
+    if errorlevel 1 exit /b 1
+)
+
+:: Mount the user profile and current directory so absolute and relative paths resolve.
+docker run --rm -it ^
+    -e HOME=/tmp ^
+    -v "%USERPROFILE%:%USERPROFILE%" ^
+    -v "%CD%:%CD%" ^
+    -w "%CD%" ^
+    meowdfer:latest %*
+exit /b %ERRORLEVEL%

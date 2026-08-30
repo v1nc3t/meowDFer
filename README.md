@@ -21,14 +21,13 @@ A CLI tool for processing image collections and converting compressed archives i
 
 ## Prerequisites
 
-Before installing `meowDFer`, ensure your environment meets the following requirements:
+### Docker install (recommended)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/macOS) or the Docker Engine (Linux), **running**
+- Permission to talk to the Docker daemon (`docker info` succeeds)
 
-### For Native Python Installation
-- **Python:** Version `3.10` or higher.
-- **System Extraction Tools:** `patoolib` depends on native system archive utilities. Ensure your system has the relevant tools installed (e.g., `p7zip-full`, `unzip`, `unrar`, `tar`).
-
-### For Docker Installation (Recommended)
-- **Docker:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running (Windows/macOS) or `docker` engine installed (Linux).
+### Native Python install
+- **Python** 3.10 or newer
+- System archive tools used by `patool` (e.g. `p7zip-full` / `7z`, `unzip`, `unrar`, `tar`)
 
 ---
 
@@ -36,28 +35,33 @@ Before installing `meowDFer`, ensure your environment meets the following requir
 
 ### Option A: Docker (Recommended)
 
-Running `meowDFer` via Docker guarantees all extraction backends are configured cleanly without installing dependencies directly on your host operating system.
+Docker ships all extraction backends inside the image, so you do not need Python or archive tools on the host. The install scripts build `meowdfer:latest` and register a `meowdfer` launcher that mounts your home directory and current working directory into the container.
 
-1. **Clone the repository:**
+1. **Clone the repository** (or unpack a [GitHub Release](https://github.com/v1nc3t/meowDFer/releases) setup zip):
    ```bash
    git clone https://github.com/v1nc3t/meowDFer.git
    cd meowDFer
    ```
 
-2. **Run the automated setup for your OS:**
+2. **Run the setup script for your OS:**
 
    * **Linux / macOS:**
      ```bash
      chmod +x install.sh
      ./install.sh
      ```
-     *Builds the image and creates a global launcher executable at `/usr/local/bin/meowdfer`.*
+     Builds the image and installs a launcher at `/usr/local/bin/meowdfer` (may prompt for `sudo`).
 
    * **Windows (PowerShell):**
      ```powershell
      powershell -ExecutionPolicy Bypass -File .\install.ps1
      ```
-     *Builds the image and appends the project folder to your User `PATH` environment variable. **Restart your terminal after installation** to refresh environment variables.*
+     Builds the image and adds the project folder to your User `PATH` (uses `meowdfer.bat`). **Restart the terminal** afterward.
+
+3. **Verify:**
+   ```bash
+   meowdfer --help
+   ```
 
 #### Video demo installation with docker
 
@@ -93,21 +97,29 @@ Running `meowDFer` via Docker guarantees all extraction backends are configured 
      .\.venv\Scripts\activate.bat
      ```
 
-3. **Install dependencies:**
+3. **Install the package:**
    ```bash
    pip install .
+   ```
+
+4. **Verify the CLI:**
+   ```bash
+   meowdfer --help
+   # equivalent:
+   python -m meowdfer --help
    ```
 
 ---
 
 ## Usage
 
-If installed via **Docker**, run commands using `meowdfer`. If running **natively**, run using `python meowdfer.py`.
+After either install path, invoke the same CLI:
 
-### Basic CLI Syntax
 ```bash
 meowdfer (-e SRC DEST | -c SRC DEST | -m SRC DEST | -cm SRC DEST | -a SRC DEST | -sc URL DEST) [OPTIONS]
 ```
+
+Relative paths are resolved from your current working directory. With the Docker launcher, absolute paths under your home directory also work.
 
 #### Video demo usage
 
@@ -196,59 +208,77 @@ meowdfer -a ./zips_dir ./final_volumes --type volume --file ./vols.txt --skip
 
 ## Manual Docker Execution (Without Installation Scripts)
 
-If you prefer not to use the automated `install.sh` or `install.ps1` scripts, you can execute the container manually by binding your working directory:
+Build the image once:
 
-### Linux / macOS:
+```bash
+docker build -t meowdfer:latest .
+```
+
+### Linux / macOS
 ```bash
 docker run --rm -it \
     --user "$(id -u):$(id -g)" \
+    -e HOME=/tmp \
+    -v "$HOME:$HOME" \
     -v "$(pwd):$(pwd)" \
     -w "$(pwd)" \
     meowdfer:latest -a ./zips_dir ./final_volumes -t volume -f ./vols.txt
 ```
 
-### Windows (Command Prompt / PowerShell):
+### Windows (Command Prompt / PowerShell)
 ```cmd
-docker run --rm -it -v "%cd%:%cd%" -w "%cd%" meowdfer:latest -a .\zips_dir .\final_volumes -t volume -f .\vols.txt
+docker run --rm -it ^
+    -e HOME=/tmp ^
+    -v "%USERPROFILE%:%USERPROFILE%" ^
+    -v "%CD%:%CD%" ^
+    -w "%CD%" ^
+    meowdfer:latest -a .\zips_dir .\final_volumes -t volume -f .\vols.txt
+```
+
+### Docker Compose
+
+Mounts the current directory into the container at `/data` and runs `meowdfer` there:
+
+```bash
+# Linux / macOS: keep output files owned by you
+export UID="$(id -u)" GID="$(id -g)"
+
+docker compose run --rm meowdfer --help
+docker compose run --rm meowdfer -e ./zips_dir ./out
+docker compose run --rm meowdfer -a ./zips_dir ./final_volumes -t volume -f ./vols.txt
 ```
 
 ---
 
 ## Running Tests
 
-Install developer dependencies:
 ```bash
 pip install -e ".[dev]"
-```
-
-Run test suite:
-```bash
 pytest tests/ -v
 ```
 
 ---
 
-## CI/CD Workflow
+## CI/CD
 
-Continuous Integration runs automatically via GitHub Actions on:
-- All Pull Requests
-- Pushes to `main` or `master` branches
+### Continuous Integration
 
-Workflow config: `.github/workflows/ci.yml`
+GitHub Actions runs tests on:
+- All pull requests
+- Pushes to `main` or `master`
+
+Workflow: `.github/workflows/ci.yml`
 
 ### Creating a Release
 
-Pushing a version tag (`v*`) runs the release workflow (`.github/workflows/release.yml`). It runs tests, builds a setup archive, and publishes a GitHub Release with auto-generated notes.
+Pushing a `v*` tag runs `.github/workflows/release.yml`. It runs tests, builds `meowDFer-v<version>-setup.zip`, and publishes a GitHub Release with auto-generated notes.
 
-1. **Commit and push your changes** to the default branch.
-2. **Create and push a version tag:**
-   ```bash
-   git tag v1.0.1
-   git push origin v1.0.1
-   ```
-3. **Wait for the Release workflow** under the Actions tab. On success it attaches `meowDFer-v1.0.1-setup.zip` to the new GitHub Release.
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
 
-You can also run it manually: **Actions → Release → Run workflow**, then enter an existing tag (e.g. `v1.0.1`).
+Or run manually: **Actions → Release → Run workflow**, then enter an existing tag.
 
 ---
 

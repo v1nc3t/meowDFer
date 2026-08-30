@@ -1,11 +1,7 @@
 services:
   meowdfer:
     build: .
-    image: meowdfer:latest
-    # Tell Docker to run the container using your specific Linux User and Group IDs
-    user: "${UID}:${GID}"
-    environment:
-      - HOME=/tmp
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
-      - ~/Downloads:/mnt/downloads
-      - ~/Documents:/mnt/documents
+      - .:/data
+    working_dir: /data

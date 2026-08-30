@@ -1,6 +1,6 @@
 import pytest
 
-from src.utils.naming_utils import (
+from meowdfer.utils.naming_utils import (
     create_chapter_name,
     create_volume_name,
     extract_chapter_number,

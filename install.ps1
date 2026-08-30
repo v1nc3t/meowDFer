@@ -1,29 +1,47 @@
-# Get the absolute folder path where this installation script is located (trimmed of trailing slashes)
+#Requires -Version 5.1
+<#
+.SYNOPSIS
+  Build the meowDFer Docker image and register a User-PATH launcher.
+#>
+$ErrorActionPreference = "Stop"
+
 $ProjectFolder = (Split-Path -Parent $MyInvocation.MyCommand.Path).TrimEnd('\')
+Set-Location $ProjectFolder
 
 Write-Host "Installing meowDFer for Windows..." -ForegroundColor Green
 
-# 1. Verify Docker CLI is accessible
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    Write-Error "Docker Desktop is not installed or not running in your environment PATH."
-    Exit 1
+    Write-Error "Docker Desktop is not installed or not available in PATH."
+    exit 1
 }
 
-# 2. Build the Docker container image
-Write-Host "Building Docker container..." -ForegroundColor Cyan
-docker build -t meowdfer:latest "$ProjectFolder"
+try {
+    docker info 1>$null 2>$null
+    if ($LASTEXITCODE -ne 0) { throw "docker info failed" }
+} catch {
+    Write-Error "Docker daemon is not running. Start Docker Desktop and retry."
+    exit 1
+}
 
-# 3. Permanently add the project directory to the User's PATH environment variable
-Write-Host "Adding folder to User Environment Path..." -ForegroundColor Cyan
+Write-Host "Building Docker image..." -ForegroundColor Cyan
+docker build -t meowdfer:latest $ProjectFolder
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Docker build failed."
+    exit 1
+}
+
+Write-Host "Adding project folder to User PATH..." -ForegroundColor Cyan
 $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($null -eq $UserPath) { $UserPath = "" }
 
-# Split existing path and normalize entries to remove trailing slashes for comparison
-$NormalizedPaths = ($UserPath -split ';') | ForEach-Object { $_.TrimEnd('\') }
+$NormalizedPaths = @()
+if (-not [string]::IsNullOrWhiteSpace($UserPath)) {
+    $NormalizedPaths = ($UserPath -split ';') | ForEach-Object { $_.TrimEnd('\') } | Where-Object { $_ }
+}
 
 if ($NormalizedPaths -contains $ProjectFolder) {
     Write-Host "Folder is already present in your PATH." -ForegroundColor Yellow
 } else {
-    # Safely append to PATH without creating double semicolons
     if ([string]::IsNullOrWhiteSpace($UserPath)) {
         $NewPath = $ProjectFolder
     } elseif ($UserPath.EndsWith(";")) {
@@ -31,9 +49,8 @@ if ($NormalizedPaths -contains $ProjectFolder) {
     } else {
         $NewPath = "$UserPath;$ProjectFolder"
     }
-
     [Environment]::SetEnvironmentVariable("Path", $NewPath, "User")
-    Write-Host "Folder permanently added to your User PATH environment variable." -ForegroundColor Green
+    Write-Host "Folder added to User PATH." -ForegroundColor Green
 }
 
-Write-Host "Installation complete! Please RESTART your Terminal / Command Prompt to refresh the PATH context." -ForegroundColor Green
+Write-Host "Installation complete. Restart your terminal, then run 'meowdfer --help'." -ForegroundColor Green

@@ -15,22 +15,25 @@ env/
 .gitignore
 .github/
 
+# Packaging leftovers
+*.egg-info/
+dist/
+build/
+
 # IDEs & Editors
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Docker / Deployment Files
-Dockerfile*
-docker-compose*
+# Host install / launcher scripts (not needed in the image)
 *.sh
 *.ps1
 *.bat
+docker-compose*
+Dockerfile*
 
-# Output artifacts & sample data
+# Local sample data & artifacts
 *.pdf
-*.zip
-*.cbz
-*.rar
-*.cbr
+zips/
+vol.txt
