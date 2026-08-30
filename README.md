@@ -236,6 +236,20 @@ Continuous Integration runs automatically via GitHub Actions on:
 
 Workflow config: `.github/workflows/ci.yml`
 
+### Creating a Release
+
+Pushing a version tag (`v*`) runs the release workflow (`.github/workflows/release.yml`). It runs tests, builds a setup archive, and publishes a GitHub Release with auto-generated notes.
+
+1. **Commit and push your changes** to the default branch.
+2. **Create and push a version tag:**
+   ```bash
+   git tag v1.0.1
+   git push origin v1.0.1
+   ```
+3. **Wait for the Release workflow** under the Actions tab. On success it attaches `meowDFer-v1.0.1-setup.zip` to the new GitHub Release.
+
+You can also run it manually: **Actions → Release → Run workflow**, then enter an existing tag (e.g. `v1.0.1`).
+
 ---
 
 ## License
