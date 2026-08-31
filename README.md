@@ -146,7 +146,6 @@ Relative paths are resolved from your current working directory. With the Docker
 | `-f`, `--file` | `FILE` | Path to text file containing chapter interval cutoffs for volumes. |
 | `-n`, `--name` | `NAME` | Override base output filename prefix. |
 | `-s`, `--skip` | *None* | Enable fault tolerance: log errors and skip failing files instead of aborting. |
-| `-d`, `--decimal` | *None* | Enable parsing of decimal chapter numbers (e.g., `10.5`). |
 | `-v`, `--verbose` | *None* | Enable detailed output logging during scraping. |
 
 ### Command-Specific Flags
@@ -154,10 +153,10 @@ Relative paths are resolved from your current working directory. With the Docker
 | Command | Required Flags | Optional Flags |
 |---|---|---|
 | `-e`, `--extract` | none | `-s`, `--skip` |
-| `-c`, `--convert` | `-t`, `--type` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
-| `-m`, `--merge` | `-f`, `--file` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
-| `-cm`, `--convert-merge` | `-t`, `--type`; `-f`, `--file` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
-| `-a`, `--all` | `-t`, `--type`; `-f`, `--file` | `-n`, `--name`; `-s`, `--skip`; `-d`, `--decimal` |
+| `-c`, `--convert` | `-t`, `--type` | `-n`, `--name`; `-s`, `--skip` |
+| `-m`, `--merge` | `-f`, `--file` | `-n`, `--name`; `-s`, `--skip` |
+| `-cm`, `--convert-merge` | `-t`, `--type`; `-f`, `--file` | `-n`, `--name`; `-s`, `--skip` |
+| `-a`, `--all` | `-t`, `--type`; `-f`, `--file` | `-n`, `--name`; `-s`, `--skip` |
 | `-sc`, `--scrape` | none | `-v`, `--verbose` |
 
 ---
@@ -173,7 +172,7 @@ meowdfer -e ./downloads/zips ./extracted_folders --skip
 ### 2. Convert Image Directories to Chapter PDFs
 Convert folders containing images into individual chapter PDFs:
 ```bash
-meowdfer -c ./extracted_folders ./chapter_pdfs --type chapter --decimal
+meowdfer -c ./extracted_folders ./chapter_pdfs --type chapter
 ```
 
 Expected folder conventions:

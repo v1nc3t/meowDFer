@@ -62,6 +62,8 @@ def test_extract_volume_number_disallows_decimal():
         ("Vol.02 Ch.45.5_clean.zip", 45.5),
         ("Chapter 99 - Extra Story.pdf", 99), 
         ("13DL.me-Chapter 10.png", 10),
+        ("Chapter 2.5", 2.5),
+        ("ch 12.75", 12.75),
     ],
 )
 def test_extract_chapter_number_defaults(name, expected):
@@ -70,14 +72,6 @@ def test_extract_chapter_number_defaults(name, expected):
 def test_extract_chapter_number_missing():
     with pytest.raises(ValueError, match="No chapter number"):
         extract_chapter_number("no_numbers_here.pdf")
-
-def test_extract_chapter_number_disallows_decimal():
-    with pytest.raises(ValueError, match="Decimal chapter"):
-        extract_chapter_number("Chapter 2.5", allow_decimal=False)
-
-def test_extract_chapter_number_disallows_decimal_hidden():
-    with pytest.raises(ValueError, match="Decimal chapter"):
-        extract_chapter_number("ch 12.75", allow_decimal=False)
 
 
 

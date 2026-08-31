@@ -1,5 +1,4 @@
 import os
-from functools import partial
 from .naming_utils import extract_chapter_number, extract_page_number, extract_volume_number
 
 def get_compressed_files(src: str) -> list[str]:
@@ -32,20 +31,35 @@ def get_folders(src: str) -> list[str]:
         raise ValueError(f"No folders found in directory: {src}")
     
     return folders
+
+def _split_by_extractor(files: list[str], extractor) -> tuple[list[str], list[tuple[str, Exception]]]:
+    valid: list[str] = []
+    invalid: list[tuple[str, Exception]] = []
+    for f in files:
+        try:
+            extractor(f)
+            valid.append(f)
+        except ValueError as e:
+            invalid.append((f, e))
+    return valid, invalid
+
+def split_valid_chapters(files: list[str]) -> tuple[list[str], list[tuple[str, Exception]]]:
+    return _split_by_extractor(files, extract_chapter_number)
+
+def split_valid_volumes(files: list[str]) -> tuple[list[str], list[tuple[str, Exception]]]:
+    return _split_by_extractor(files, extract_volume_number)
     
-def sort_chapters(files: list[str], allow_decimal: bool) -> list[str]:
+def sort_chapters(files: list[str]) -> list[str]:
     if not files:
         raise ValueError("No folders found to sort.")
     
-    key_func = partial(extract_chapter_number, allow_decimal=allow_decimal)
-    
     for f in files:
         try:
-            key_func(f)
+            extract_chapter_number(f)
         except ValueError as e:
             raise ValueError(f"Sorting aborted: Malformed chapter folder structure. Details: {e}")
 
-    return sorted(files, key=key_func)
+    return sorted(files, key=extract_chapter_number)
 
 def sort_volumes(files: list[str]) -> list[str]:
     if not files:
@@ -103,12 +117,12 @@ def get_volumes_file(src: str) -> list[int]:
     
     return intervals
 
-def get_chapter_map(files: list[str], allow_decimal: bool) -> dict[float | int, str]:
+def get_chapter_map(files: list[str]) -> dict[float | int, str]:
     chapter_map: dict[float | int, str] = {}
 
     for f in files:
         try:
-            ch = extract_chapter_number(f, allow_decimal)
+            ch = extract_chapter_number(f)
         except ValueError as e:
             raise ValueError(f"Failed to build chapter map. Extraction error on file '{f}': {e}")
 
