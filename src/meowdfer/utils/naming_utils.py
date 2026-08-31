@@ -24,7 +24,7 @@ def extract_volume_number(file_name: str) -> int:
 def create_chapter_name(name: str, chapter_number: float) -> str:
     return f"{name} Chapter {chapter_number}"
 
-def extract_chapter_number(file_name: str, allow_decimal: bool = True) -> float:
+def extract_chapter_number(file_name: str) -> float:
     base_name = os.path.basename(file_name)
     
     clean_name = re.sub(r'(?i)\b\d+DL\.me[-_]?', '', base_name)
@@ -34,10 +34,6 @@ def extract_chapter_number(file_name: str, allow_decimal: bool = True) -> float:
         raise ValueError(f"No chapter number found in: {file_name}")
         
     raw_num = match.group(1)
-    
-    if not allow_decimal and '.' in raw_num:
-        raise ValueError(f"Decimal chapter numbers are not allowed: {file_name}")
-        
     num = float(raw_num)
     return int(num) if num.is_integer() else num
 
