@@ -6,12 +6,12 @@ from typing import Any
 
 from pypdf import PdfWriter
 from meowdfer.utils import naming_utils
-from meowdfer.utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map
+from meowdfer.utils.file_utils import get_pdfs, sort_chapters, get_volumes_file, get_chapter_map, split_valid_chapters
 
 
-def run(src_path: str, dest_path: str, vols_path: str, name: str, allow_decimal: bool = False, to_skip: bool = False, console: Any = None) -> bool:
+def run(src_path: str, dest_path: str, vols_path: str, name: str, to_skip: bool = False, console: Any = None) -> bool:
     with tempfile.TemporaryDirectory() as temp_dir:
-        if not merge(src_path, temp_dir, vols_path, name, allow_decimal, to_skip, console):
+        if not merge(src_path, temp_dir, vols_path, name, to_skip, console):
             return False
 
         os.makedirs(dest_path, exist_ok=True)
@@ -27,12 +27,26 @@ def run(src_path: str, dest_path: str, vols_path: str, name: str, allow_decimal:
     return True
 
 
-def merge(src: str, dest: str, vols: str, name: str, allow_decimal: bool, to_skip: bool, console: Any) -> bool:
+def merge(src: str, dest: str, vols: str, name: str, to_skip: bool, console: Any) -> bool:
     try:
         pdfs = get_pdfs(src)
-        sorted_pdfs = sort_chapters(pdfs, allow_decimal)
+    except (FileNotFoundError, ValueError) as e:
+        console.print(f"[bold red]Initialization Error:[/bold red] {e}")
+        return False
+
+    pdfs, invalid = split_valid_chapters(pdfs)
+    for bad_name, err in invalid:
+        if not to_skip:
+            console.print(
+                f"[bold red]Initialization Error:[/bold red] Sorting aborted: Malformed chapter folder structure. Details: {err}"
+            )
+            return False
+        console.print(f"[bold yellow]Skipped:[/bold yellow] {bad_name}, {err}")
+
+    try:
+        sorted_pdfs = sort_chapters(pdfs)
         intervals = get_volumes_file(vols)
-        chapter_map = get_chapter_map(sorted_pdfs, allow_decimal)
+        chapter_map = get_chapter_map(sorted_pdfs)
     except (FileNotFoundError, ValueError) as e:
         console.print(f"[bold red]Initialization Error:[/bold red] {e}")
         return False

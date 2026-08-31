@@ -49,7 +49,6 @@ def initiate():
     parser.add_argument("-f", "--file", metavar="FILE", help="name of file with intervals for volumes.")
     parser.add_argument("-n", "--name", metavar="NAME", help="optional output name (if different from destination folder name).")
     parser.add_argument("-s", "--skip", action="store_true", help="log and continue to next item on processing error instead of aborting.")
-    parser.add_argument("-d", "--decimal", action="store_true", help="allows processing of decimal chapters.")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose/detailed output.")
 
     args = parser.parse_args()
@@ -124,7 +123,7 @@ def main():
         console.print("[bold green]Convert: started[/bold green]")
         with console.status("[bold green]Converting...", spinner="dots"):
             final_name = args.name if args.name else dest.name
-            ok = convert_pdf.run(src, dest, final_name, args.type, allow_decimal=args.decimal, to_skip=args.skip, console=console)
+            ok = convert_pdf.run(src, dest, final_name, args.type, to_skip=args.skip, console=console)
         _finish(ok, "Convert completed!", "Convert failed: destination was not updated.")
 
     elif args.merge:
@@ -132,7 +131,7 @@ def main():
         console.print("[bold green]Merge: started[/bold green]")
         with console.status("[bold green]Merging...", spinner="dots"):
             final_name = args.name if args.name else dest.name
-            ok = merge_pdf.run(src, dest, args.file, final_name, allow_decimal=args.decimal, to_skip=args.skip, console=console)
+            ok = merge_pdf.run(src, dest, args.file, final_name, to_skip=args.skip, console=console)
         _finish(ok, "Merge completed!", "Merge failed: destination was not updated.")
 
     elif args.convert_merge:
@@ -140,7 +139,7 @@ def main():
         console.print("[bold green]CM pipeline (Convert -> Merge): started[/bold green]")
         with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else dest.name
-            ok = convert_merge.run(src, dest, args.file, final_name, args.type, allow_decimal=args.decimal, to_skip=args.skip, console=console)
+            ok = convert_merge.run(src, dest, args.file, final_name, args.type, to_skip=args.skip, console=console)
         _finish(ok, "CM pipeline (Convert -> Merge): completed!", "CM pipeline (Convert -> Merge) failed: destination was not updated.")
 
     elif args.all:
@@ -148,7 +147,7 @@ def main():
         console.print("[bold green]All pipeline (Extract -> Convert -> Merge): started[/bold green]")
         with console.status("[bold green]Pipeline...", spinner="dots"):
             final_name = args.name if args.name else dest.name
-            ok = extract_convert_merge.run(src, dest, args.file, final_name, args.type, allow_decimal=args.decimal, to_skip=args.skip, console=console)
+            ok = extract_convert_merge.run(src, dest, args.file, final_name, args.type, to_skip=args.skip, console=console)
         _finish(ok, "All pipeline (Extract -> Convert -> Merge): completed!", "All pipeline (Extract -> Convert -> Merge) failed: destination was not updated.")
     
     elif args.scrape: 
